@@ -430,14 +430,25 @@ table.rt tr:nth-child(even) td{background:rgba(0,0,0,.015)}
       </div>
       <div class="setrow" style="cursor:default;margin-bottom:0">
         <div class="setico">📶</div>
-        <div class="setbody"><div class="setname">WiFi IP 驗證</div><div class="setdesc">員工須在店內網路才能打卡</div></div>
+        <div class="setbody"><div class="setname">WiFi 網路驗證</div><div class="setdesc">員工須在店內網路才能打卡</div></div>
         <label class="tgl"><input type="checkbox" id="wifi-tgl" onchange="toggleWifi()"><span class="ttr"></span></label>
       </div>
       <div class="collap" id="wifi-col">
         <div style="padding:6px 0 14px">
-          <div style="background:var(--al);border:1px solid rgba(180,83,9,.18);border-radius:12px;padding:10px 14px;font-size:12px;color:rgba(120,65,0,.9);margin-bottom:8px">目前 IP：<b id="ip-disp">讀取中...</b></div>
-          <button class="btn btn-ghost" onclick="lockIP()">鎖定目前 IP</button>
+          <div style="background:var(--gl);border:1px solid rgba(21,128,61,.18);border-radius:12px;padding:10px 14px;font-size:13px;color:rgba(0,80,30,.9);margin-bottom:8px">📶 目前連線：<b id="conn-type">偵測中...</b><br><span style="font-size:11px;color:var(--t2)">IP: <span id="ip-disp">讀取中...</span></span></div>
+          <button class="btn btn-blue" onclick="lockIP()">🔒 鎖定目前網路（店內 WiFi）</button>
+          <div style="font-size:11px;color:var(--t2);margin-top:6px;padding:0 4px">ℹ️ 請在店內連上 WiFi 後點擊鎖定，員工必須在同一網路下才能打卡</div>
         </div>
+      </div>
+      <p class="sec">工時設定</p>
+      <div class="card cp" style="margin-bottom:12px">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+          <div class="field"><div class="fl">上班時間</div><input type="time" class="inp" id="cfg-work-start" value="09:00" style="font-size:14px;padding:10px 12px"></div>
+          <div class="field"><div class="fl">標準工時(h)</div><input type="number" class="inp" id="cfg-std-hrs" value="8" min="1" max="24" style="font-size:14px;padding:10px 12px"></div>
+          <div class="field"><div class="fl">修約(min)</div><input type="number" class="inp" id="cfg-round" value="1" min="1" max="60" style="font-size:14px;padding:10px 12px"></div>
+        </div>
+        <div style="font-size:11px;color:var(--t2);margin:4px 0 10px;line-height:1.6">• 超過上班時間簽到 → 自動標註「遲到」<br>• 工時超過標準 → 自動標註「超時」<br>• 修約 = 工時每 N 分鐘無條件捨去</div>
+        <button class="btn btn-ink" id="btn-save-cfg" onclick="saveShopCfg()"><div class="sp"></div><span class="bt">儲存設定</span></button>
       </div>
       <div id="admin-staff-sec" style="display:none">
         <p class="sec">員工管理</p>
@@ -637,6 +648,7 @@ function retryGeo(){
 /* ══ INIT ══ */
 async function init(){
   fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d=>{myIP=d.ip;const e=document.getElementById('ip-disp');if(e)e.textContent=myIP}).catch(()=>{});
+  detectConn();
   if(ROLE==='ADMIN')show('page-admin');
   else if(ROLE==='DEPUTY'||ROLE==='STAFF'){show('page-staff');startGeo()}
   else if(ROLE==='PENDING'){show('page-pending');startPoll()}
@@ -651,7 +663,7 @@ async function init(){
     if(res.role==='FIRST_LOGIN')show('page-setup');
     else if(res.role==='GUEST'){
       const sa=window.matchMedia('(display-mode:standalone)').matches||navigator.standalone;
-      if(sa){show('page-recover');toast('桑面版首次開啟，請用手機+密碼登入','ok',4000)}
+      if(sa){show('page-recover');toast('面版首次開啟，請用手機+密碼登入','ok',4000)}
       else show('page-register');
     }
     else if(res.role==='PENDING'){show('page-pending');startPoll()}
@@ -719,6 +731,11 @@ function renderAdmin(res){
     if(res.shopInfo[5]&&res.shopInfo[5]!=='尚未設定地址')document.getElementById('addr-disp').textContent=res.shopInfo[5];
     document.getElementById('wifi-tgl').checked=!!res.shopInfo[6];
     document.getElementById('wifi-col').classList.toggle('on',!!res.shopInfo[6]);
+    /* 工時設定 */
+    const cfgRound=document.getElementById('cfg-round'),cfgStd=document.getElementById('cfg-std-hrs'),cfgWork=document.getElementById('cfg-work-start');
+    if(cfgRound)cfgRound.value=parseInt(res.shopInfo[7])||1;
+    if(cfgStd)cfgStd.value=Math.round((parseInt(res.shopInfo[8])||480)/60);
+    if(cfgWork)cfgWork.value=String(res.shopInfo[9]||'09:00');
   }
   if(res.pending&&res.pending.length>0){
     document.getElementById('admin-pending-sec').style.display='block';
@@ -814,7 +831,7 @@ async function doCheckAction(type){
   btn.classList.add('ld');btnIn.disabled=true;btnOut.disabled=true;note.textContent='打卡中...';
   try{
     const r=await api({action:'checkIn',uid:UID,lat:myLat,lng:myLng,ip:myIP,name:NAME||ls('u_name'),forceType:type});
-    if(r.success){toast(r.msg||'打卡成功','ok');note.textContent=r.msg||''}
+    if(r.success){toast(r.msg||'打卡成功','ok');note.textContent=r.msg||'';if(r.isOvertime)toast('⚠️ 本班工時超過標準，已標註超時','fail',5000);if(r.isLate)toast('⚠️ 已超過上班時間，系統已註記遲到','fail',5000)}
     else{toast(r.msg||'打卡失敗','fail');note.textContent=''}
     await loadMyRecs();
   }catch(_){toast('連線失敗，請重試','fail');note.textContent=''}
@@ -920,8 +937,11 @@ function renderReport(rows){
   rows.forEach(r=>{
     const it=parseTime(r.in),ot=parseTime(r.out);
     const shMins=it&&ot?toMins(r.in,r.out):0;
-    const badge=r.result==='正常'?`<span class="bok">正常</span>`:`<span class="bab">${r.result||'--'}</span>`;
-    tb.innerHTML+=`<tr><td>${fmtD(r.date)}</td><td>${r.name}</td><td>${it||'--'}</td><td>${ot||'--'}</td><td>${shMins>0?fmtMins(shMins):'--'}</td><td>${badge}</td></tr>`;
+    const rs=String(r.result||'');
+    const isOT=rs.includes('超時'),isLate=rs.includes('遲到');
+    const badge=isOT?`<span class="bab">超時</span>`:isLate?`<span class="bab" style="background:var(--al);color:var(--amber);border-color:rgba(180,83,9,.18)">遲到</span>`:rs==='正常'?`<span class="bok">正常</span>`:`<span class="bab">${rs||'--'}</span>`;
+    const rowStyle=isOT?' style="background:rgba(220,38,38,.08)"':isLate?' style="background:rgba(180,83,9,.06)"':'';
+    tb.innerHTML+=`<tr${rowStyle}><td>${fmtD(r.date)}</td><td>${r.name}</td><td>${it||'--'}</td><td>${ot||'--'}</td><td>${shMins>0?fmtMins(shMins):'--'}</td><td>${badge}</td></tr>`;
     if(shMins>0){totalMins+=shMins;totalDays++}
   });
   document.getElementById('rep-tfoot').innerHTML=`<td colspan="4">合計 ${totalDays} 天</td><td>${fmtMins(totalMins)}</td><td></td>`;
@@ -957,8 +977,11 @@ async function loadDepReport(){
     let totalMins=0,totalDays=0;
     res.records.forEach(r=>{
       const it=parseTime(r.in),ot=parseTime(r.out),shMins=it&&ot?toMins(r.in,r.out):0;
-      const badge=r.result==='正常'?`<span class="bok">正常</span>`:`<span class="bab">${r.result||'--'}</span>`;
-      tb.innerHTML+=`<tr><td>${fmtD(r.date)}</td><td>${r.name}</td><td>${it||'--'}</td><td>${ot||'--'}</td><td>${shMins>0?fmtMins(shMins):'--'}</td><td>${badge}</td></tr>`;
+      const rs=String(r.result||'');
+      const isOT=rs.includes('超時'),isLate=rs.includes('遲到');
+      const badge=isOT?`<span class="bab">超時</span>`:isLate?`<span class="bab" style="background:var(--al);color:var(--amber);border-color:rgba(180,83,9,.18)">遲到</span>`:rs==='正常'?`<span class="bok">正常</span>`:`<span class="bab">${rs||'--'}</span>`;
+      const rowStyle=isOT?' style="background:rgba(220,38,38,.08)"':isLate?' style="background:rgba(180,83,9,.06)"':'';
+      tb.innerHTML+=`<tr${rowStyle}><td>${fmtD(r.date)}</td><td>${r.name}</td><td>${it||'--'}</td><td>${ot||'--'}</td><td>${shMins>0?fmtMins(shMins):'--'}</td><td>${badge}</td></tr>`;
       if(shMins>0){totalMins+=shMins;totalDays++}
     });
     document.getElementById('dep-rep-tfoot').innerHTML=`<td colspan="4">合計 ${totalDays} 天</td><td>${fmtMins(totalMins)}</td><td></td>`;
@@ -974,7 +997,21 @@ async function updateAddr(){
   catch(_){toast('更新失敗','fail')}finally{btn.classList.remove('ld')}
 }
 function toggleWifi(){const on=document.getElementById('wifi-tgl').checked;document.getElementById('wifi-col').classList.toggle('on',on);api({action:'toggleWiFi',enabled:on}).then(()=>toast(on?'WiFi 驗證啟用':'已關閉','ok')).catch(()=>toast('設定失敗','fail'))}
-async function lockIP(){try{await api({action:'lockIP',ip:myIP});toast('IP 已鎖定: '+myIP,'ok')}catch(_){toast('鎖定失敗','fail')}}
+async function lockIP(){try{await api({action:'lockIP',ip:myIP});toast('✅ 已鎖定店內網路 ('+myIP+')','ok',3500)}catch(_){toast('鎖定失敗','fail')}}
+async function saveShopCfg(){
+  const btn=document.getElementById('btn-save-cfg');btn.classList.add('ld');
+  const roundUnit=parseInt(document.getElementById('cfg-round').value)||1;
+  const stdHrs=parseInt(document.getElementById('cfg-std-hrs').value)||8;
+  const workStart=document.getElementById('cfg-work-start').value||'09:00';
+  try{await api({action:'saveShopSettings',roundUnit,stdMins:stdHrs*60,workStart});toast('設定已儲存','ok')}catch(_){toast('儲存失敗','fail')}finally{btn.classList.remove('ld')}
+}
+/* 偵測連線類型 */
+function detectConn(){
+  const el=document.getElementById('conn-type');if(!el)return;
+  const c=navigator.connection||navigator.mozConnection||navigator.webkitConnection;
+  if(c){el.textContent=c.type==='wifi'?'📶 WiFi 連線中':c.type==='cellular'?'📱 行動網路':'🌐 '+c.type;c.addEventListener('change',detectConn)}
+  else{el.textContent='🌐 已連線'}
+}
 async function approve(tuid){
   const card=event.target.closest('.staffcard');if(card){event.target.disabled=true;event.target.innerHTML='<div class="sp" style="display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite"></div>'}
   try{await api({action:'approve',targetUid:tuid});toast('已核准','ok');if(card)card.style.opacity='.4';const res=await api({action:'initUser',uid:UID});renderAdmin(res)}catch(_){toast('操作失敗','fail')}
