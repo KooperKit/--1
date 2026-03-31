@@ -382,6 +382,14 @@ table.rt tr:nth-child(even) td{background:rgba(0,0,0,.015)}
     <div class="tabs"><div class="tab on" id="atab-0" onclick="atab(0)">報表</div><div class="tab" id="atab-1" onclick="atab(1)">設定</div></div>
     <!-- ADMIN PANEL 1: REPORT -->
     <div id="apanel-0" >
+      <div id="admin-pending-sec" style="display:none">
+        <p class="sec">待審核員工 <span class="pchip" id="pcount">0</span></p>
+        <div id="admin-pending-list"></div>
+      </div>
+      <div id="admin-makeup-sec" style="display:none">
+        <p class="sec">補打卡審核 <span class="pchip" id="mkcount">0</span></p>
+        <div id="admin-makeup-list"></div>
+      </div>
       <p class="sec">出勤報表</p>
       <div class="filtcard">
         <div class="field"><div class="fl">員工</div><select class="inp" id="rpt-staff"><option value="">全部員工</option></select></div>
@@ -408,14 +416,6 @@ table.rt tr:nth-child(even) td{background:rgba(0,0,0,.015)}
     </div>
     <!-- ADMIN PANEL 0 -->
     <div id="apanel-1"style="display:none">
-      <div id="admin-pending-sec" style="display:none">
-        <p class="sec">待審核員工 <span class="pchip" id="pcount">0</span></p>
-        <div id="admin-pending-list"></div>
-      </div>
-      <div id="admin-makeup-sec" style="display:none">
-        <p class="sec">補打卡審核 <span class="pchip" id="mkcount">0</span></p>
-        <div id="admin-makeup-list"></div>
-      </div>
       <p class="sec">店鋪設定</p>
       <div class="setrow" onclick="toggleCol('addr-col')">
         <div class="setico">📍</div>
@@ -475,6 +475,7 @@ table.rt tr:nth-child(even) td{background:rgba(0,0,0,.015)}
     <div class="field"><div class="fl">日期</div><input type="date" class="inp" id="mk-date"></div>
     <div class="field"><div class="fl">時間</div><input type="time" class="inp" id="mk-time"></div>
     <div class="field"><div class="fl">類型</div><select class="inp" id="mk-type"><option value="簽到">簽到（上班）</option><option value="簽退">簽退（下班）</option></select></div>
+    <div class="field" id="mk-shift-wrap" style="display:none"><div class="fl">第幾班</div><select class="inp" id="mk-shift"><option value="1">第 1 班</option></select></div>
     <div class="field"><div class="fl">原因</div><textarea class="inp" id="mk-reason" rows="2" placeholder="例：忘記打卡、手機沒電..."></textarea></div>
     <button class="btn btn-ink" id="btn-mk" onclick="submitMakeup()"><div class="sp"></div><span class="bt">送出申請</span></button>
     <button class="btn btn-ghost" style="margin-top:8px" onclick="closeMakeup()">取消</button>
@@ -620,8 +621,15 @@ function retryGeo(){
   geoOk=false;
   if(geoWatchId!==null){navigator.geolocation.clearWatch(geoWatchId);geoWatchId=null}
   navigator.geolocation.getCurrentPosition(
-    p=>{myLat=p.coords.latitude;myLng=p.coords.longitude;geoOk=true;updateLoc();startGeo()},
-    ()=>{updateLoc(true);toast('請到瀏覽器設定 → 網站權限 → 位置，允許本站定位','fail',5000)},
+    p=>{myLat=p.coords.latitude;myLng=p.coords.longitude;geoOk=true;updateLoc();_watchGeo()},
+    err=>{
+      updateLoc(true);
+      if(err.code===1){
+        const iOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+        if(iOS) toast('請到 iPhone 設定 → Safari → 位置 → 設為「詢問」後重新整理','fail',8000);
+        else toast('請點網址列 🔒 圖示 → 權限 → 位置 → 允許','fail',8000);
+      }else toast('定位失敗，請確認 GPS 已開啟','fail',4000);
+    },
     {enableHighAccuracy:true,timeout:10000}
   );
 }
@@ -981,14 +989,16 @@ function closeBrand(e){if(!e||e.target===document.getElementById('brand-ovl'))do
 async function saveBrand(){const v=document.getElementById('modal-brand').value.trim();if(!v)return;applyBrand(v);closeBrand();toast('品牌名稱已更新','ok');try{await api({action:'updateBrand',brand:v,uid:UID})}catch(_){}}
 
 /* ══ MAKEUP PUNCH ══ */
-function openMakeup(){document.getElementById('makeup-ovl').classList.add('on');const n=new Date();document.getElementById('mk-date').value=n.getFullYear()+'-'+pad(n.getMonth()+1)+'-'+pad(n.getDate());document.getElementById('mk-time').value='';document.getElementById('mk-reason').value=''}
+function openMakeup(){document.getElementById('makeup-ovl').classList.add('on');const n=new Date();document.getElementById('mk-date').value=n.getFullYear()+'-'+pad(n.getMonth()+1)+'-'+pad(n.getDate());document.getElementById('mk-time').value='';document.getElementById('mk-reason').value='';document.getElementById('mk-type').value='簽到';document.getElementById('mk-shift-wrap').style.display='none';document.getElementById('mk-type').onchange=updateMkShift;document.getElementById('mk-date').onchange=updateMkShift}
+function updateMkShift(){const type=document.getElementById('mk-type').value,dateVal=document.getElementById('mk-date').value,wrap=document.getElementById('mk-shift-wrap');if(type!=='簽退'||!dateVal){wrap.style.display='none';return}wrap.style.display='block';const dateKey=dateVal.replace(/-/g,''),dayRecs=recs[dateKey]||[],sel=document.getElementById('mk-shift');sel.innerHTML='';if(dayRecs.length===0){sel.innerHTML='<option value="1">第 1 班（無紀錄）</option>'}else{dayRecs.forEach((r,i)=>{sel.innerHTML+='<option value="'+(i+1)+'">第 '+(i+1)+' 班 · 簽到 '+(r.in||'?')+' '+(r.out?'· 已簽退 '+r.out:'· 未簽退')+'</option>'})}}
 function closeMakeup(e){if(!e||e.target===document.getElementById('makeup-ovl'))document.getElementById('makeup-ovl').classList.remove('on')}
 async function submitMakeup(){
   const date=document.getElementById('mk-date').value,time=document.getElementById('mk-time').value,type=document.getElementById('mk-type').value,reason=document.getElementById('mk-reason').value.trim();
   if(!date||!time){toast('請選擇日期與時間','fail');return}
   if(!reason){toast('請填寫原因','fail');return}
+  const shiftNum=type==='簽退'?document.getElementById('mk-shift').value:'';
   const btn=document.getElementById('btn-mk');btn.classList.add('ld');
-  try{await api({action:'requestMakeup',uid:UID,name:NAME||ls('u_name'),date,time,type,reason});toast('補打卡申請已送出','ok');closeMakeup()}catch(_){toast('提交失敗','fail')}finally{btn.classList.remove('ld')}
+  try{await api({action:'requestMakeup',uid:UID,name:NAME||ls('u_name'),date,time,type,reason,shiftNum});toast('補打卡申請已送出','ok');closeMakeup()}catch(_){toast('提交失敗','fail')}finally{btn.classList.remove('ld')}
 }
 function fmtMkDate(s){
   if(!s)return'--';
@@ -1017,7 +1027,8 @@ function renderMakeupAdmin(list){
   list.forEach(m=>{
     const d=document.createElement('div');d.className='staffcard';d.style.flexWrap='wrap';
     const dateStr=fmtMkDate(m.date),timeStr=fmtMkTime(m.time);
-    d.innerHTML=`<div class="ava">${(m.name||'?').slice(0,2)}</div><div style="flex:1"><div class="snm">${m.name} \xB7 ${m.type}</div><div class="sph">${dateStr} ${timeStr}</div>${m.reason?'<div class="sph" style="margin-top:2px;color:var(--t2)">原因：'+m.reason+'</div>':''}</div><div style="display:flex;gap:6px"><button class="appbtn" onclick="handleMakeupReq('${m.id}',true)">通過</button><button class="appbtn" style="background:var(--red)" onclick="handleMakeupReq('${m.id}',false)">拒絕</button></div>`;
+    const shiftLabel=m.shift?' 第'+m.shift+'班':'';
+    d.innerHTML=`<div class="ava">${(m.name||'?').slice(0,2)}</div><div style="flex:1"><div class="snm">${m.name} \xB7 ${m.type}${shiftLabel}</div><div class="sph">${dateStr} ${timeStr}</div>${m.reason?'<div class="sph" style="margin-top:2px;color:var(--t2)">原因：'+m.reason+'</div>':''}</div><div style="display:flex;gap:6px"><button class="appbtn" onclick="handleMakeupReq('${m.id}',true)">通過</button><button class="appbtn" style="background:var(--red)" onclick="handleMakeupReq('${m.id}',false)">拒絕</button></div>`;
     el.appendChild(d);
   });
 }
@@ -1052,6 +1063,7 @@ async function recoverDevice(){
   try{
     const res=await api({action:'initUser',uid:UID,isRecover:true,phone,adminPass:pass});
     if(res.success){
+      if(res.uid){UID=res.uid;set('u_uid',res.uid)}
       if(res.brand)applyBrand(res.brand);
       set('u_role',res.role);
       if(res.name)set('u_name',res.name);
