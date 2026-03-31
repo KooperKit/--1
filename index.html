@@ -326,8 +326,8 @@ table.rt tr:nth-child(even) td{background:rgba(0,0,0,.015)}
       </div>
       <div class="greet"><span class="greet-hi" id="greet-hi">你好，</span><b id="sname">--</b><span class="shift-count" id="shift-badge" style="display:none"></span></div>
       <div class="ck-wrap">
-        <button class="ck-btn ck-in" id="btn-ck-in" onclick="doCheckAction('in')"><div class="sp"></div><span class="ck-ico">↓</span><span class="bt">簽到</span><span class="ck-sub">上班打卡</span></button>
         <button class="ck-btn ck-out" id="btn-ck-out" onclick="doCheckAction('out')" disabled><div class="sp"></div><span class="ck-ico">↑</span><span class="bt">簽退</span><span class="ck-sub">下班打卡</span></button>
+        <button class="ck-btn ck-in" id="btn-ck-in" onclick="doCheckAction('in')"><div class="sp"></div><span class="ck-ico">↓</span><span class="bt">簽到</span><span class="ck-sub">上班打卡</span></button>
       </div>
       <div class="snote" id="snote"></div>
       <div style="text-align:center;margin-top:18px"><a href="#" onclick="openMakeup();return false" style="font-size:13px;color:var(--t2);text-decoration:underline">忘記打卡？補打卡申請</a></div>
@@ -577,13 +577,24 @@ function startGeo(){
 function updateLoc(fail){
   const b=document.getElementById('locbadge'),t=document.getElementById('loctxt');
   if(!b)return;
-  if(fail){b.className='locbadge fail';t.textContent='無法取得位置';return}
+  if(fail){b.className='locbadge fail';t.textContent='無法取得位置，點此重試';b.style.cursor='pointer';b.onclick=retryGeo;return}
   if(!geoOk||!shopInfo){b.className='locbadge scan';t.textContent='定位中...';return}
   const d=hvs(myLat,myLng,shopInfo[1],shopInfo[2]);
   if(d<=shopInfo[3]){b.className='locbadge ok';t.textContent='在範圍內 · '+Math.round(d)+'m'}
   else{b.className='locbadge fail';t.textContent='距離過遠 · '+Math.round(d)+'m'}
 }
 function hvs(a,b,c,d){const R=6371e3,dA=(c-a)*Math.PI/180,dB=(d-b)*Math.PI/180;const x=Math.sin(dA/2)**2+Math.cos(a*Math.PI/180)*Math.cos(c*Math.PI/180)*Math.sin(dB/2)**2;return R*2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x))}
+function retryGeo(){
+  const b=document.getElementById('locbadge'),t=document.getElementById('loctxt');
+  if(b){b.className='locbadge scan';t.textContent='重新定位中...';b.style.cursor='';b.onclick=null}
+  geoOk=false;
+  if(geoWatchId!==null){navigator.geolocation.clearWatch(geoWatchId);geoWatchId=null}
+  navigator.geolocation.getCurrentPosition(
+    p=>{myLat=p.coords.latitude;myLng=p.coords.longitude;geoOk=true;updateLoc();startGeo()},
+    ()=>{updateLoc(true);toast('請到瀏覽器設定 → 網站權限 → 位置，允許本站定位','fail',5000)},
+    {enableHighAccuracy:true,timeout:10000}
+  );
+}
 
 /* ══ INIT ══ */
 async function init(){
@@ -651,7 +662,7 @@ function renderStaff(res){
   const sub=document.getElementById('staff-sub'),depTab=document.getElementById('stab-2');
   if(res.role==='DEPUTY'){
     ROLE='DEPUTY';set('u_role','DEPUTY');
-    if(sub)sub.textContent='副店長';if(depTab)depTab.style.display='';
+    if(sub)sub.textContent='管理員';if(depTab)depTab.style.display='';
     if(res.allStaff){const sel=document.getElementById('dep-rpt-staff');if(sel){sel.innerHTML='<option value="">全部員工</option>';res.allStaff.forEach(s=>{sel.innerHTML+=`<option value="${s.uid}">${s.name}</option>`})}}
     const n=new Date(),y=n.getFullYear(),m=pad(n.getMonth()+1),ld=new Date(y,n.getMonth()+1,0).getDate();
     const df=document.getElementById('dep-rpt-from'),dt=document.getElementById('dep-rpt-to');
@@ -676,6 +687,8 @@ function renderAdmin(res){
       d.innerHTML=`<div class="ava">${(u.name||'?').slice(0,2)}</div><div style="flex:1"><div class="snm">${u.name}</div><div class="sph">${u.phone}</div></div><button class="appbtn" onclick="approve('${u.targetUid}')">核准</button>`;
       list.appendChild(d);
     });
+  }else{
+    document.getElementById('admin-pending-sec').style.display='none';
   }
   if(res.makeup)renderMakeupAdmin(res.makeup);
   if(res.allStaff){
@@ -693,7 +706,7 @@ function renderAdmin(res){
     const sl=document.getElementById('admin-staff-list');sl.innerHTML='';
     res.allStaff.forEach(s=>{
       const d=document.createElement('div');d.className='staffrow';
-      d.innerHTML=`<div class="ava">${(s.name||'?').slice(0,2)}</div><div style="flex:1"><div class="snm">${s.name}</div><div class="sph">${s.role||'員工'}</div></div><select class="inp" style="width:auto;padding:8px 30px 8px 12px;font-size:13px;border-radius:10px" onchange="promoteStaff('${s.uid}',this.value)"><option value="員工"${s.role==='員工'||!s.role?' selected':''}>員工</option><option value="副店長"${s.role==='副店長'?' selected':''}>副店長</option></select>`;
+      d.innerHTML=`<div class="ava">${(s.name||'?').slice(0,2)}</div><div style="flex:1"><div class="snm">${s.name}</div><div class="sph">${(s.role==='副店長'||s.role==='管理員')?'管理員':s.role||'員工'}</div></div><select class="inp" style="width:auto;padding:8px 30px 8px 12px;font-size:13px;border-radius:10px" onchange="promoteStaff('${s.uid}',this.value)"><option value="員工"${s.role==='員工'||!s.role?' selected':''}>員工</option><option value="管理員"${s.role==='副店長'||s.role==='管理員'?' selected':''}>管理員</option></select>`;
       sl.appendChild(d);
     });
   }
@@ -753,7 +766,7 @@ function updateHint(){
 async function doCheckAction(type){
   const btnIn=document.getElementById('btn-ck-in'),btnOut=document.getElementById('btn-ck-out');
   const btn=type==='in'?btnIn:btnOut,note=document.getElementById('snote');
-  if(!geoOk){toast('請先允許定位權限','fail');return}
+  if(!geoOk){toast('請先允許定位權限（點擊上方定位徽章重試）','fail',4000);return}
   if(shopInfo){const d=hvs(myLat,myLng,shopInfo[1],shopInfo[2]);if(d>shopInfo[3]){toast('距離過遠 ('+Math.round(d)+'m)','fail');return}}
   if(type==='in'&&openShiftTime){toast('⚠️ 提醒：上一班 '+openShiftTime+' 尚未簽退','fail',3500)}
   btn.classList.add('ld');btnIn.disabled=true;btnOut.disabled=true;note.textContent='打卡中...';
