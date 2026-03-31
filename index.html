@@ -4,6 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title id="doc-title">打卡</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#ECEEF3">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%23111118'/%3E%3Ctext x='90' y='120' text-anchor='middle' font-size='100'%3E☑%3C/text%3E%3C/svg%3E">
+<link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22%E6%89%93%E5%8D%A1%22%2C%22short_name%22%3A%22%E6%89%93%E5%8D%A1%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23ECEEF3%22%2C%22theme_color%22%3A%22%23111118%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%253Csvg%2520xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%2520viewBox%3D'0%25200%2520192%2520192'%253E%253Crect%2520width%3D'192'%2520height%3D'192'%2520rx%3D'40'%2520fill%3D'%2523111118'%2F%253E%253Ctext%2520x%3D'96'%2520y%3D'130'%2520text-anchor%3D'middle'%2520font-size%3D'110'%2520fill%3D'white'%253E%25E2%2598%2591%253C%2Ftext%253E%253C%2Fsvg%253E%22%2C%22sizes%22%3A%22192x192%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%7D%5D%7D">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -331,6 +337,7 @@ table.rt tr:nth-child(even) td{background:rgba(0,0,0,.015)}
       </div>
       <div class="snote" id="snote"></div>
       <div style="text-align:center;margin-top:18px"><a href="#" onclick="openMakeup();return false" style="font-size:13px;color:var(--t2);text-decoration:underline">忘記打卡？補打卡申請</a></div>
+      <button class="btn btn-ghost a2hs-btn" style="margin-top:14px;display:none" onclick="addToHome()">📲 加到手機桌面</button>
     </div>
     <!-- CALENDAR PANEL -->
     <div id="spanel-1" style="display:none">
@@ -435,6 +442,7 @@ table.rt tr:nth-child(even) td{background:rgba(0,0,0,.015)}
         <p class="sec">員工管理</p>
         <div id="admin-staff-list"></div>
       </div>
+      <button class="btn btn-ghost a2hs-btn" style="margin-top:14px;display:none" onclick="addToHome()">📲 加到手機桌面</button>
       <p class="sec">帳號</p>
       <button class="btn btn-red" onclick="show('page-logout')">切換帳號 / 登出</button>
     </div>
@@ -480,6 +488,15 @@ table.rt tr:nth-child(even) td{background:rgba(0,0,0,.015)}
     <div class="field"><div class="fl">顯示名稱</div><input type="text" class="inp" id="modal-brand" placeholder="輸入品牌名稱"></div>
     <button class="btn btn-ink" onclick="saveBrand()">儲存</button>
     <button class="btn btn-ghost" style="margin-top:8px" onclick="closeBrand()">取消</button>
+  </div>
+</div>
+
+<!-- A2HS GUIDE SHEET -->
+<div class="ovl" id="a2hs-ovl" onclick="closeA2HS(event)">
+  <div class="sheet">
+    <div class="shandle"></div>
+    <div id="a2hs-body"></div>
+    <button class="btn btn-ghost" style="margin-top:16px" onclick="closeA2HS()">知道了</button>
   </div>
 </div>
 
@@ -1037,6 +1054,53 @@ async function submitReg(){
   catch(_){toast('提交失敗','fail')}finally{btn.classList.remove('ld')}
 }
 function logout(){clearInterval(pollTimer);localStorage.clear();toast('已登出','ok');setTimeout(()=>location.reload(),500)}
+
+/* ══ A2HS (Add to Home Screen) ══ */
+let deferredPrompt=null;
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;showA2HS()});
+function showA2HS(){document.querySelectorAll('.a2hs-btn').forEach(b=>b.style.display='flex')}
+function addToHome(){
+  /* Android / Chrome: use native prompt */
+  if(deferredPrompt){deferredPrompt.prompt();deferredPrompt.userChoice.then(()=>{deferredPrompt=null;hideA2HS()});return}
+  /* iOS Safari: show manual instructions */
+  const iOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1;
+  if(iOS){showA2HSGuide('ios');return}
+  /* Other: generic fallback */
+  showA2HSGuide('other');
+}
+function hideA2HS(){document.querySelectorAll('.a2hs-btn').forEach(b=>b.style.display='none')}
+function showA2HSGuide(platform){
+  const ovl=document.getElementById('a2hs-ovl');
+  const body=document.getElementById('a2hs-body');
+  if(platform==='ios'){
+    body.innerHTML=`<div style="text-align:center">
+      <div style="font-size:52px;margin-bottom:14px">📲</div>
+      <div style="font-size:18px;font-weight:700;margin-bottom:14px">加到手機桌面</div>
+      <div style="font-size:14px;color:var(--t2);line-height:1.8;text-align:left">
+        <b>Step 1：</b>點擊底部分享按鈕 <span style="font-size:18px">⬆️</span><br>
+        <b>Step 2：</b>選擇「<b>加入主畫面</b>」<br>
+        <b>Step 3：</b>點擊右上角「新增」
+      </div>
+    </div>`;
+  }else{
+    body.innerHTML=`<div style="text-align:center">
+      <div style="font-size:52px;margin-bottom:14px">📲</div>
+      <div style="font-size:18px;font-weight:700;margin-bottom:14px">加到手機桌面</div>
+      <div style="font-size:14px;color:var(--t2);line-height:1.8;text-align:left">
+        點擊瀏覽器右上角 <b>⠇</b> 選單<br>
+        選擇「<b>加到主畫面</b>」或「<b>安裝應用程式</b>」
+      </div>
+    </div>`;
+  }
+  ovl.classList.add('on');
+}
+function closeA2HS(e){if(!e||e.target===document.getElementById('a2hs-ovl'))document.getElementById('a2hs-ovl').classList.remove('on')}
+/* Show A2HS button if not already installed as standalone */
+if(!window.matchMedia('(display-mode:standalone)').matches&&!navigator.standalone){
+  /* On iOS there's no beforeinstallprompt, show button directly */
+  const iOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1;
+  if(iOS) showA2HS();
+}
 
 window.addEventListener('load',()=>{init()});
 </script>
