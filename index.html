@@ -275,6 +275,7 @@ table.rt tr:nth-child(even) td{background:rgba(0,0,0,.015)}
     <div class="card cp">
       <div style="font-size:22px;font-weight:700;letter-spacing:-.03em;margin-bottom:6px">新員工申請</div>
       <div style="font-size:13px;color:var(--t2);margin-bottom:20px;line-height:1.6">送出後等待老闆審核，通過後自動進入打卡介面。</div>
+      <div id="standalone-tip" style="display:none;background:var(--al);border:1px solid rgba(180,83,9,.18);border-radius:12px;padding:10px 14px;font-size:13px;color:rgba(100,55,0,.9);margin-bottom:16px;line-height:1.6">📲 從桌面開啟的使用者，請點下方「設備恢復」登入。</div>
       <div class="field"><div class="fl">真實姓名</div><input type="text" class="inp" id="reg-name" placeholder="請輸入真實姓名"><div class="ferr" id="e-reg-name">姓名不能為空</div></div>
       <div class="field"><div class="fl">手機號碼</div><input type="tel" class="inp" id="reg-phone" placeholder="09xx-xxx-xxx" inputmode="tel"><div class="ferr" id="e-reg-phone">請輸入有效手機號碼</div></div>
       <div class="field"><div class="fl">個人密碼</div><input type="password" class="inp" id="reg-pass" placeholder="4–8 位，換設備時需要"><div class="ferr" id="e-reg-pass">密碼至少 4 個字元</div></div>
@@ -583,12 +584,24 @@ setInterval(tick,1000);tick();
 let geoWatchId=null;
 function startGeo(){
   if(!navigator.geolocation){updateLoc(true);return}
-  /* 持續追蹤 GPS，保持座標隨時最新 */
+  /* 先檢查權限狀態，避免重複提示 */
+  if(navigator.permissions){
+    navigator.permissions.query({name:'geolocation'}).then(perm=>{
+      if(perm.state==='denied'){updateLoc(true);return}
+      _watchGeo();
+      perm.addEventListener('change',()=>{
+        if(perm.state==='denied'){updateLoc(true);if(geoWatchId!==null){navigator.geolocation.clearWatch(geoWatchId);geoWatchId=null}}
+        else _watchGeo();
+      });
+    }).catch(()=>_watchGeo());
+  }else{_watchGeo()}
+}
+function _watchGeo(){
   if(geoWatchId!==null) navigator.geolocation.clearWatch(geoWatchId);
   geoWatchId=navigator.geolocation.watchPosition(
     p=>{myLat=p.coords.latitude;myLng=p.coords.longitude;geoOk=true;updateLoc()},
     ()=>{if(!geoOk)updateLoc(true)},
-    {enableHighAccuracy:true,timeout:15000,maximumAge:5000}
+    {enableHighAccuracy:true,timeout:15000,maximumAge:30000}
   );
 }
 function updateLoc(fail){
@@ -628,7 +641,11 @@ async function init(){
     if(res.brand)applyBrand(res.brand);
     if(res.shopInfo)shopInfo=res.shopInfo;
     if(res.role==='FIRST_LOGIN')show('page-setup');
-    else if(res.role==='GUEST')show('page-register');
+    else if(res.role==='GUEST'){
+      const sa=window.matchMedia('(display-mode:standalone)').matches||navigator.standalone;
+      if(sa){show('page-recover');toast('桑面版首次開啟，請用手機+密碼登入','ok',4000)}
+      else show('page-register');
+    }
     else if(res.role==='PENDING'){show('page-pending');startPoll()}
     else if(res.role==='ADMIN'){show('page-admin');renderAdmin(res)}
     else if(res.role==='DEPUTY'||res.role==='STAFF'){show('page-staff');renderStaff(res);startGeo();loadMyRecs()}
@@ -1097,10 +1114,15 @@ function showA2HSGuide(platform){
 function closeA2HS(e){if(!e||e.target===document.getElementById('a2hs-ovl'))document.getElementById('a2hs-ovl').classList.remove('on')}
 /* Show A2HS button if not already installed as standalone */
 if(!window.matchMedia('(display-mode:standalone)').matches&&!navigator.standalone){
-  /* On iOS there's no beforeinstallprompt, show button directly */
   const iOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1;
   if(iOS) showA2HS();
+}else{
+  /* 已安裝到桌面，隱藏 A2HS 按鈕 */
+  hideA2HS();
 }
+/* 獨立模式提示 */
+const _sa=window.matchMedia('(display-mode:standalone)').matches||navigator.standalone;
+if(_sa){const tip=document.getElementById('standalone-tip');if(tip)tip.style.display='block'}
 
 window.addEventListener('load',()=>{init()});
 </script>
