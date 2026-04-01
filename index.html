@@ -442,12 +442,11 @@ table.rt tr:nth-child(even) td{background:rgba(0,0,0,.015)}
       </div>
       <p class="sec">工時設定</p>
       <div class="card cp" style="margin-bottom:12px">
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
-          <div class="field"><div class="fl">上班時間</div><input type="time" class="inp" id="cfg-work-start" value="09:00" style="font-size:14px;padding:10px 12px"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
           <div class="field"><div class="fl">標準工時(h)</div><input type="number" class="inp" id="cfg-std-hrs" value="8" min="1" max="24" style="font-size:14px;padding:10px 12px"></div>
           <div class="field"><div class="fl">修約(min)</div><input type="number" class="inp" id="cfg-round" value="1" min="1" max="60" style="font-size:14px;padding:10px 12px"></div>
         </div>
-        <div style="font-size:11px;color:var(--t2);margin:4px 0 10px;line-height:1.6">• 超過上班時間簽到 → 自動標註「遲到」<br>• 工時超過標準 → 自動標註「超時」<br>• 修約 = 工時每 N 分鐘無條件捨去</div>
+        <div style="font-size:11px;color:var(--t2);margin:4px 0 10px;line-height:1.6">• 工時超過標準 → 自動標註「超時」<br>• 修約 = 工時每 N 分鐘無條件捨去</div>
         <button class="btn btn-ink" id="btn-save-cfg" onclick="saveShopCfg()"><div class="sp"></div><span class="bt">儲存設定</span></button>
       </div>
       <div id="admin-staff-sec" style="display:none">
@@ -732,10 +731,9 @@ function renderAdmin(res){
     document.getElementById('wifi-tgl').checked=!!res.shopInfo[6];
     document.getElementById('wifi-col').classList.toggle('on',!!res.shopInfo[6]);
     /* 工時設定 */
-    const cfgRound=document.getElementById('cfg-round'),cfgStd=document.getElementById('cfg-std-hrs'),cfgWork=document.getElementById('cfg-work-start');
+    const cfgRound=document.getElementById('cfg-round'),cfgStd=document.getElementById('cfg-std-hrs');
     if(cfgRound)cfgRound.value=parseInt(res.shopInfo[7])||1;
     if(cfgStd)cfgStd.value=Math.round((parseInt(res.shopInfo[8])||480)/60);
-    if(cfgWork)cfgWork.value=String(res.shopInfo[9]||'09:00');
   }
   if(res.pending&&res.pending.length>0){
     document.getElementById('admin-pending-sec').style.display='block';
@@ -831,7 +829,7 @@ async function doCheckAction(type){
   btn.classList.add('ld');btnIn.disabled=true;btnOut.disabled=true;note.textContent='打卡中...';
   try{
     const r=await api({action:'checkIn',uid:UID,lat:myLat,lng:myLng,ip:myIP,name:NAME||ls('u_name'),forceType:type});
-    if(r.success){toast(r.msg||'打卡成功','ok');note.textContent=r.msg||'';if(r.isOvertime)toast('⚠️ 本班工時超過標準，已標註超時','fail',5000);if(r.isLate)toast('⚠️ 已超過上班時間，系統已註記遲到','fail',5000)}
+    if(r.success){toast(r.msg||'打卡成功','ok');note.textContent=r.msg||'';if(r.isOvertime)toast('⚠️ 本班工時超過標準，已標註超時','fail',5000)}
     else{toast(r.msg||'打卡失敗','fail');note.textContent=''}
     await loadMyRecs();
   }catch(_){toast('連線失敗，請重試','fail');note.textContent=''}
@@ -938,9 +936,9 @@ function renderReport(rows){
     const it=parseTime(r.in),ot=parseTime(r.out);
     const shMins=it&&ot?toMins(r.in,r.out):0;
     const rs=String(r.result||'');
-    const isOT=rs.includes('超時'),isLate=rs.includes('遲到');
-    const badge=isOT?`<span class="bab">超時</span>`:isLate?`<span class="bab" style="background:var(--al);color:var(--amber);border-color:rgba(180,83,9,.18)">遲到</span>`:rs==='正常'?`<span class="bok">正常</span>`:`<span class="bab">${rs||'--'}</span>`;
-    const rowStyle=isOT?' style="background:rgba(220,38,38,.08)"':isLate?' style="background:rgba(180,83,9,.06)"':'';
+    const isOT=rs.includes('超時');
+    const badge=isOT?`<span class="bab">超時</span>`:rs==='正常'?`<span class="bok">正常</span>`:`<span class="bab">${rs||'--'}</span>`;
+    const rowStyle=isOT?' style="background:rgba(220,38,38,.08)"':'';
     tb.innerHTML+=`<tr${rowStyle}><td>${fmtD(r.date)}</td><td>${r.name}</td><td>${it||'--'}</td><td>${ot||'--'}</td><td>${shMins>0?fmtMins(shMins):'--'}</td><td>${badge}</td></tr>`;
     if(shMins>0){totalMins+=shMins;totalDays++}
   });
@@ -978,9 +976,9 @@ async function loadDepReport(){
     res.records.forEach(r=>{
       const it=parseTime(r.in),ot=parseTime(r.out),shMins=it&&ot?toMins(r.in,r.out):0;
       const rs=String(r.result||'');
-      const isOT=rs.includes('超時'),isLate=rs.includes('遲到');
-      const badge=isOT?`<span class="bab">超時</span>`:isLate?`<span class="bab" style="background:var(--al);color:var(--amber);border-color:rgba(180,83,9,.18)">遲到</span>`:rs==='正常'?`<span class="bok">正常</span>`:`<span class="bab">${rs||'--'}</span>`;
-      const rowStyle=isOT?' style="background:rgba(220,38,38,.08)"':isLate?' style="background:rgba(180,83,9,.06)"':'';
+      const isOT=rs.includes('超時');
+      const badge=isOT?`<span class="bab">超時</span>`:rs==='正常'?`<span class="bok">正常</span>`:`<span class="bab">${rs||'--'}</span>`;
+      const rowStyle=isOT?' style="background:rgba(220,38,38,.08)"':'';
       tb.innerHTML+=`<tr${rowStyle}><td>${fmtD(r.date)}</td><td>${r.name}</td><td>${it||'--'}</td><td>${ot||'--'}</td><td>${shMins>0?fmtMins(shMins):'--'}</td><td>${badge}</td></tr>`;
       if(shMins>0){totalMins+=shMins;totalDays++}
     });
@@ -1002,8 +1000,7 @@ async function saveShopCfg(){
   const btn=document.getElementById('btn-save-cfg');btn.classList.add('ld');
   const roundUnit=parseInt(document.getElementById('cfg-round').value)||1;
   const stdHrs=parseInt(document.getElementById('cfg-std-hrs').value)||8;
-  const workStart=document.getElementById('cfg-work-start').value||'09:00';
-  try{await api({action:'saveShopSettings',roundUnit,stdMins:stdHrs*60,workStart});toast('設定已儲存','ok')}catch(_){toast('儲存失敗','fail')}finally{btn.classList.remove('ld')}
+  try{await api({action:'saveShopSettings',roundUnit,stdMins:stdHrs*60});toast('設定已儲存','ok')}catch(_){toast('儲存失敗','fail')}finally{btn.classList.remove('ld')}
 }
 /* 偵測連線類型 */
 function detectConn(){
