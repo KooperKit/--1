@@ -2,1175 +2,523 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title id="doc-title">打卡</title>
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="theme-color" content="#ECEEF3">
-<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%23111118'/%3E%3Ctext x='90' y='120' text-anchor='middle' font-size='100'%3E☑%3C/text%3E%3C/svg%3E">
-<link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22%E6%89%93%E5%8D%A1%22%2C%22short_name%22%3A%22%E6%89%93%E5%8D%A1%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23ECEEF3%22%2C%22theme_color%22%3A%22%23111118%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%253Csvg%2520xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%2520viewBox%3D'0%25200%2520192%2520192'%253E%253Crect%2520width%3D'192'%2520height%3D'192'%2520rx%3D'40'%2520fill%3D'%2523111118'%2F%253E%253Ctext%2520x%3D'96'%2520y%3D'130'%2520text-anchor%3D'middle'%2520font-size%3D'110'%2520fill%3D'white'%253E%25E2%2598%2591%253C%2Ftext%253E%253C%2Fsvg%253E%22%2C%22sizes%22%3A%22192x192%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%7D%5D%7D">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>空調先生｜4支AIDA短影片企劃表</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html{height:100%;-webkit-text-size-adjust:100%}
-body{font-family:'Noto Sans TC',-apple-system,BlinkMacSystemFont,sans-serif;background:#ECEEF3;color:#1A1A1F;min-height:100%;overflow-x:hidden}
-:root{
-  --bg:#ECEEF3;--s:rgba(255,255,255,0.76);--s2:rgba(255,255,255,0.55);--hi:#FFFFFF;
-  --br:rgba(0,0,0,0.065);--br2:rgba(0,0,0,0.12);
-  --t1:#1A1A1F;--t2:rgba(26,26,31,0.52);--t3:rgba(26,26,31,0.28);
-  --blue:#2563EB;--bl:rgba(37,99,235,0.09);
-  --green:#15803D;--gl:rgba(21,128,61,0.09);
-  --amber:#B45309;--al:rgba(180,83,9,0.09);
-  --red:#DC2626;--rl:rgba(220,38,38,0.08);
-  --ink:#111118;
-  --blur:blur(22px) saturate(170%);
-  --r:16px;--r2:22px;
-  --sh:0 2px 10px rgba(0,0,0,0.07),0 1px 3px rgba(0,0,0,0.04);
-  --sh2:0 8px 30px rgba(0,0,0,0.10),0 2px 8px rgba(0,0,0,0.06);
-  --ease:cubic-bezier(.4,0,.2,1);--spring:cubic-bezier(.34,1.56,.64,1);
-}
-/* ─ PAGE ─ */
-.page{display:none;flex-direction:column;min-height:100dvh;max-width:480px;margin:0 auto}
-.page.show{display:flex;animation:pg .28s var(--ease)}
-@keyframes pg{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-/* ─ TOPBAR ─ */
-.topbar{
-  position:sticky;top:0;z-index:50;
-  background:rgba(236,238,243,0.88);
-  backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);
-  border-bottom:1px solid var(--br);
-  padding:14px 18px 12px;
-  display:flex;align-items:center;justify-content:space-between;
-  flex-shrink:0;
-}
-.tbrand{font-size:17px;font-weight:700;letter-spacing:-.02em;color:var(--t1)}
-.tsub{font-size:11px;color:var(--t3);margin-top:1px}
-.icobtn{width:36px;height:36px;border-radius:12px;background:var(--hi);border:1px solid var(--br2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;transition:transform .14s var(--spring)}
-.icobtn:active{transform:scale(.91)}
-/* ─ SCROLL ─ */
-.scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 16px 36px;scrollbar-width:none}
-.scroll::-webkit-scrollbar{display:none}
-/* ─ CARD ─ */
-.card{background:var(--s);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);border:1px solid var(--br);border-radius:var(--r2);box-shadow:var(--sh);overflow:hidden}
-.cp{padding:20px}
-.card+.card{margin-top:12px}
-/* ─ SEC LABEL ─ */
-.sec{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);margin:18px 0 8px 2px}
-.sec:first-child{margin-top:2px}
-/* ─ FIELD ─ */
-.field{margin-bottom:11px}
-.fl{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--t3);margin-bottom:5px;padding-left:2px}
-input.inp,select.inp,textarea.inp{
-  width:100%;background:rgba(255,255,255,.88);border:1px solid var(--br2);border-radius:13px;
-  padding:13px 15px;font-size:16px;font-family:inherit;color:var(--t1);
-  outline:none;-webkit-appearance:none;appearance:none;
-  transition:border-color .17s,box-shadow .17s;
-}
-input.inp::placeholder,textarea.inp::placeholder{color:var(--t3)}
-input.inp:focus,select.inp:focus,textarea.inp:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.11)}
-input.inp.bad,select.inp.bad{border-color:var(--red)!important;box-shadow:0 0 0 3px var(--rl)!important}
-.ferr{font-size:12px;color:var(--red);padding:4px 4px 0;display:none}
-.ferr.on{display:block}
-select.inp{padding-right:36px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9'%3E%3Cpath d='M1 1l6 6 6-6' stroke='%23999' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 13px center}
-textarea.inp{resize:none}
-/* ─ BUTTONS ─ */
-.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;border:none;outline:none;cursor:pointer;border-radius:14px;padding:15px;font-family:inherit;font-size:16px;font-weight:600;letter-spacing:-.01em;transition:transform .16s var(--spring),filter .13s;position:relative;overflow:hidden}
-.btn:active{transform:scale(.97)}
-.btn:disabled{opacity:.42;pointer-events:none}
-.btn+.btn{margin-top:9px}
-.btn-ink{background:var(--ink);color:#fff}
-.btn-ink:active{filter:brightness(1.2)}
-.btn-blue{background:var(--blue);color:#fff}
-.btn-ghost{background:rgba(0,0,0,.05);border:1px solid var(--br2);color:var(--t1)}
-.btn-red{background:var(--rl);border:1px solid rgba(220,38,38,.18);color:var(--red)}
-.btn .sp{width:17px;height:17px;border-radius:50%;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;animation:spin .7s linear infinite;display:none;flex-shrink:0}
-@keyframes spin{to{transform:rotate(360deg)}}
-.btn.ld .sp{display:block}
-.btn.ld .bt{display:none}
-/* ─ OR ─ */
-.or{display:flex;align-items:center;gap:12px;color:var(--t3);font-size:12px;margin:13px 0}
-.or::before,.or::after{content:'';flex:1;height:.5px;background:var(--br2)}
-/* ─ TOGGLE ─ */
-.tgl{display:inline-block;position:relative;width:48px;height:28px;flex-shrink:0}
-.tgl input{opacity:0;width:0;height:0}
-.ttr{position:absolute;inset:0;cursor:pointer;border-radius:28px;background:#C7C7CC;transition:background .24s}
-.ttr::before{content:'';position:absolute;width:22px;height:22px;border-radius:50%;background:#fff;left:3px;top:3px;box-shadow:0 1px 4px rgba(0,0,0,.18);transition:transform .24s var(--spring)}
-input:checked~.ttr{background:var(--green)}
-input:checked~.ttr::before{transform:translateX(20px)}
-/* ─ TOAST ─ */
-#toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(18px);background:rgba(17,17,24,.93);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);color:#fff;border-radius:40px;padding:11px 22px;font-size:14px;font-weight:500;white-space:nowrap;z-index:9999;opacity:0;transition:opacity .2s,transform .27s var(--spring);pointer-events:none;max-width:calc(100vw - 36px);text-align:center}
-#toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
-/* ─ OVERLAY / SHEET ─ */
-.ovl{position:fixed;inset:0;z-index:800;background:rgba(0,0,0,.32);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);display:none;align-items:flex-end}
-.ovl.on{display:flex;animation:ovlin .22s var(--ease)}
-@keyframes ovlin{from{opacity:0}to{opacity:1}}
-.sheet{background:#F3F4F8;border-radius:24px 24px 0 0;width:100%;padding:14px 18px calc(env(safe-area-inset-bottom,16px) + 14px);box-shadow:0 -8px 40px rgba(0,0,0,.13);animation:shup .32s var(--spring);max-height:90dvh;overflow-y:auto}
-@keyframes shup{from{transform:translateY(48px)}to{transform:translateY(0)}}
-.shandle{width:34px;height:4px;border-radius:2px;background:rgba(0,0,0,.14);margin:0 auto 16px}
-.stitle{font-size:18px;font-weight:700;letter-spacing:-.02em;margin-bottom:16px}
-/* ─ LOADING ─ */
-#page-loading{align-items:center;justify-content:center;flex-direction:column;gap:18px;min-height:100dvh}
-.ring{width:44px;height:44px;border-radius:50%;border:2.5px solid rgba(0,0,0,.08);border-top-color:var(--blue);animation:spin .9s linear infinite}
-.loadmsg{font-size:14px;color:var(--t2)}
-/* ─ STAFF: clock ─ */
-.clockwrap{padding:22px 0 4px;text-align:center}
-.clocktime{font-size:78px;font-weight:200;letter-spacing:-.05em;line-height:1;font-variant-numeric:tabular-nums;color:var(--t1)}
-.colon{animation:cbl 1s step-end infinite}
-@keyframes cbl{0%,49%{opacity:1}50%,100%{opacity:.2}}
-.clocksec{font-size:26px;color:var(--t2);font-weight:300;vertical-align:super}
-.clockdate{font-size:13px;color:var(--t2);margin-top:4px}
-/* ─ LOC BADGE ─ */
-.locrow{display:flex;justify-content:center;margin:8px 0 12px}
-.locbadge{display:inline-flex;align-items:center;gap:7px;padding:7px 14px;border-radius:100px;font-size:12px;font-weight:600;transition:all .4s var(--ease)}
-.locbadge.scan{background:var(--al);color:var(--amber);border:1px solid rgba(180,83,9,.2)}
-.locbadge.ok{background:var(--gl);color:var(--green);border:1px solid rgba(21,128,61,.22)}
-.locbadge.ok .locdot{animation:none}
-.locbadge.fail{background:var(--rl);color:var(--red);border:1px solid rgba(220,38,38,.2)}
-.locdot{width:7px;height:7px;border-radius:50%;background:currentColor;animation:lp 2s ease-in-out infinite}
-@keyframes lp{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.65)}}
-/* ─ STAT STRIP ─ */
-.stat3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px}
-.sc{background:var(--hi);border:1px solid var(--br);border-radius:16px;padding:13px 8px;text-align:center;box-shadow:var(--sh);transition:transform .15s var(--spring)}
-.sc:active{transform:scale(.96)}
-.sv{font-size:16px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
-.sv.g{color:var(--green)}.sv.a{color:var(--amber)}.sv.b{color:var(--blue)}
-.sl{font-size:10px;color:var(--t3);font-weight:600;letter-spacing:.05em;text-transform:uppercase;margin-top:2px}
-/* ─ GREET ─ */
-.greet{font-size:19px;font-weight:300;margin-bottom:14px;letter-spacing:-.02em}
-.greet b{font-weight:700}
-/* ─ CHECK-IN BTNS ─ */
-.ck-wrap{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:4px}
-.ck-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:22px 10px;border:none;border-radius:var(--r2);cursor:pointer;font-family:inherit;font-weight:700;font-size:18px;transition:transform .16s var(--spring),opacity .2s;position:relative;letter-spacing:-.02em;color:#fff}
-.ck-btn:active{transform:scale(.95)}
-.ck-btn:disabled{opacity:.28;pointer-events:none;filter:grayscale(.5)}
-.ck-btn .sp{width:20px;height:20px;border-radius:50%;border:2.5px solid rgba(255,255,255,.35);border-top-color:#fff;animation:spin .7s linear infinite;display:none;position:absolute}
-.ck-btn.ld .sp{display:block}
-.ck-btn.ld .bt,.ck-btn.ld .ck-ico,.ck-btn.ld .ck-sub{opacity:0}
-.ck-in{background:var(--green);box-shadow:0 4px 18px rgba(21,128,61,.3)}
-.ck-in:active{filter:brightness(1.12)}
-.ck-out{background:var(--amber);box-shadow:0 4px 18px rgba(180,83,9,.28)}
-.ck-out:active{filter:brightness(1.12)}
-.ck-ico{font-size:26px;line-height:1}
-.ck-sub{font-size:11px;font-weight:500;opacity:.7}
-.snote{text-align:center;font-size:12px;color:var(--t3);margin-top:8px;min-height:18px}
-.greet-hi{font-size:15px;color:var(--t2);font-weight:300;display:block;margin-bottom:2px}
-.shift-count{font-size:11px;color:var(--blue);font-weight:600;background:var(--bl);border-radius:100px;padding:3px 10px;margin-left:8px}
-.dep-badge{display:inline-block;padding:2px 9px;border-radius:100px;background:rgba(37,99,235,.1);color:var(--blue);font-size:11px;font-weight:700;margin-left:6px}
-.staffrow{background:var(--hi);border:1px solid var(--br);border-radius:var(--r);padding:12px 14px;display:flex;align-items:center;gap:12px;margin-bottom:8px;box-shadow:var(--sh)}
-.promo-btn{padding:6px 12px;border:1px solid var(--br2);border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;background:var(--bl);color:var(--blue);transition:transform .13s var(--spring);flex-shrink:0}
-.promo-btn:active{transform:scale(.93)}
-.promo-btn.is-dep{background:var(--al);color:var(--amber);border-color:rgba(180,83,9,.2)}
-/* ─ TABS ─ */
-.tabs{display:flex;gap:2px;background:rgba(0,0,0,.07);border-radius:13px;padding:3px;margin-bottom:14px}
-.tab{flex:1;border-radius:10px;padding:9px 4px;font-size:13px;font-weight:600;text-align:center;cursor:pointer;color:var(--t2);transition:background .18s,color .18s,box-shadow .18s}
-.tab.on{background:#fff;color:var(--t1);box-shadow:0 1px 5px rgba(0,0,0,.09)}
-/* ─ CALENDAR ─ */
-.calnav{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
-.calmonth{font-size:16px;font-weight:700;letter-spacing:-.01em}
-.cnbtn{width:30px;height:30px;border-radius:50%;background:rgba(0,0,0,.06);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--t1);transition:background .13s}
-.cnbtn:active{background:rgba(0,0,0,.12)}
-.caldow{display:grid;grid-template-columns:repeat(7,1fr);margin-bottom:3px}
-.dowcell{font-size:10px;font-weight:700;text-align:center;color:var(--t3);text-transform:uppercase;padding:3px 0}
-.caldow .dowcell:first-child{color:var(--red)}
-.caldow .dowcell:last-child{color:var(--blue)}
-.calgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
-.dc{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:11px;font-size:13px;font-weight:500;color:var(--t1);cursor:pointer;position:relative;transition:background .12s;flex-direction:column;gap:1px}
-.dc:active{background:rgba(0,0,0,.07)}
-.dc.empty{pointer-events:none;opacity:0}
-.dc.today{background:var(--ink)!important;color:#fff!important}
-.dc.hasin{background:var(--gl)}
-.dc.hasboth{background:var(--bl)}
-.dc.sel{outline:2px solid var(--blue);outline-offset:1px}
-.dc.sun{color:var(--red)}.dc.sat{color:var(--blue)}
-.dc.today.sun,.dc.today.sat{color:#fff}
-.daydot{width:4px;height:4px;border-radius:50%;background:var(--green);flex-shrink:0}
-.dc.today .daydot{background:#fff}
-.daydet{background:var(--hi);border:1px solid var(--br);border-radius:18px;padding:16px 18px;margin-top:11px;min-height:54px;display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--t2)}
-.daydet.has{display:block;background:rgba(21,128,61,.05);border-color:rgba(21,128,61,.2)}
-.ddlbl{font-size:10px;color:var(--t3);font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
-.ddval{font-size:18px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
-.ddnote{font-size:12px;color:var(--t2);margin-top:10px;padding-top:10px;border-top:1px solid var(--br)}
-/* ─ PENDING ─ */
-.pendwrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 22px;text-align:center}
-.pendico{width:88px;height:88px;border-radius:50%;background:var(--al);border:2px solid rgba(180,83,9,.2);display:flex;align-items:center;justify-content:center;font-size:40px;margin-bottom:20px;animation:breathe 3s ease-in-out infinite}
-@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
-.rfind{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--t3);margin-top:14px}
-.rfdot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:rfd 2s ease-in-out infinite}
-@keyframes rfd{0%,100%{opacity:1}50%{opacity:.2}}
-.warnbox{background:var(--al);border:1px solid rgba(180,83,9,.18);border-radius:14px;padding:12px 16px;font-size:13px;color:rgba(100,55,0,.85);line-height:1.65;text-align:left;width:100%;margin-top:16px}
-/* ─ ADMIN SETROW ─ */
-.setrow{display:flex;align-items:center;gap:13px;padding:14px 16px;background:var(--s);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);border:1px solid var(--br);border-radius:var(--r);box-shadow:var(--sh);margin-bottom:8px;cursor:pointer;transition:transform .12s var(--spring)}
-.setrow:active{transform:scale(.985)}
-.setico{width:36px;height:36px;border-radius:10px;background:rgba(0,0,0,.06);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
-.setbody{flex:1;min-width:0}
-.setname{font-size:15px;font-weight:600;color:var(--t1)}
-.setdesc{font-size:12px;color:var(--t2);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.setarrow{color:var(--t3);font-size:15px;flex-shrink:0}
-.collap{overflow:hidden;max-height:0;transition:max-height .36s var(--ease)}
-.collap.on{max-height:280px}
-.pchip{display:inline-flex;align-items:center;background:var(--rl);border:1px solid rgba(220,38,38,.18);color:var(--red);border-radius:100px;font-size:11px;font-weight:700;padding:2px 9px;margin-left:8px;vertical-align:middle}
-/* ─ STAFF CARD (approval) ─ */
-.staffcard{background:var(--hi);border:1px solid var(--br);border-radius:var(--r);padding:12px 14px;display:flex;align-items:center;gap:12px;margin-bottom:8px;box-shadow:var(--sh)}
-.ava{width:38px;height:38px;border-radius:50%;background:var(--bl);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--blue);flex-shrink:0}
-.snm{font-size:14px;font-weight:600}
-.sph{font-size:12px;color:var(--t2)}
-.appbtn{padding:8px 14px;background:var(--green);color:#fff;border:none;border-radius:11px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;flex-shrink:0;transition:transform .13s var(--spring)}
-.appbtn:active{transform:scale(.93)}
-/* ─ REPORT ─ */
-.filtcard{background:var(--hi);border:1px solid var(--br);border-radius:var(--r2);padding:18px;box-shadow:var(--sh);margin-bottom:12px}
-.drow{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.repwrap{background:var(--hi);border:1px solid var(--br);border-radius:var(--r2);overflow:hidden;box-shadow:var(--sh);margin-bottom:12px}
-.repscroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
-table.rt{width:100%;border-collapse:collapse;font-size:13px;white-space:nowrap;min-width:460px}
-table.rt th{background:rgba(0,0,0,.04);font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--t3);padding:10px 13px;text-align:left;border-bottom:1px solid var(--br)}
-table.rt td{padding:11px 13px;color:var(--t1);border-bottom:1px solid var(--br);font-variant-numeric:tabular-nums}
-table.rt tr:last-child td{border-bottom:none}
-table.rt tr:nth-child(even) td{background:rgba(0,0,0,.015)}
-.totrow td{font-weight:700;background:rgba(37,99,235,.05)!important;color:var(--blue)}
-.bok{display:inline-block;padding:2px 8px;border-radius:100px;background:var(--gl);color:var(--green);font-size:11px;font-weight:700}
-.bab{display:inline-block;padding:2px 8px;border-radius:100px;background:var(--rl);color:var(--red);font-size:11px;font-weight:700}
-.repempty{text-align:center;padding:30px 20px;font-size:14px;color:var(--t2)}
-.exrow{display:flex;gap:8px}
-.exrow .btn{flex:1;padding:13px;font-size:14px}
-/* ─ LOGOUT ─ */
-.logpg{flex:1;display:flex;align-items:center;justify-content:center;padding:32px 22px}
-/* ─ STAGGER ─ */
-.stag>*{opacity:0;animation:sit .38s var(--ease) forwards}
-.stag>*:nth-child(1){animation-delay:.04s}.stag>*:nth-child(2){animation-delay:.09s}.stag>*:nth-child(3){animation-delay:.14s}.stag>*:nth-child(4){animation-delay:.19s}.stag>*:nth-child(5){animation-delay:.24s}.stag>*:nth-child(6){animation-delay:.29s}
-@keyframes sit{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #232736;
+    --border: #2e3345;
+    --text: #e8eaf0;
+    --text-dim: #8b90a5;
+    --accent-save: #f59e0b;
+    --accent-follow: #3b82f6;
+    --accent-comment: #10b981;
+    --accent-dm: #ef4444;
+    --tag-bg: rgba(255,255,255,0.06);
+    --radius: 12px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans TC', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    padding: 24px 16px 60px;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding: 32px 20px;
+    background: linear-gradient(135deg, #1a1d27 0%, #232736 100%);
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background: radial-gradient(circle at 30% 40%, rgba(59,130,246,0.06) 0%, transparent 50%),
+                radial-gradient(circle at 70% 60%, rgba(245,158,11,0.06) 0%, transparent 50%);
+    pointer-events: none;
+  }
+  .header h1 {
+    font-size: 28px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+    position: relative;
+  }
+  .header p {
+    font-size: 14px;
+    color: var(--text-dim);
+    position: relative;
+  }
+  .header .brand {
+    display: inline-block;
+    background: linear-gradient(90deg, var(--accent-follow), var(--accent-comment));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .video-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    margin-bottom: 28px;
+    overflow: hidden;
+  }
+
+  .card-header {
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .card-number {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: 20px;
+    flex-shrink: 0;
+    color: #fff;
+  }
+  .card-header-text { flex: 1; }
+  .card-header-text h2 {
+    font-size: 17px;
+    font-weight: 700;
+    line-height: 1.4;
+    margin-bottom: 4px;
+  }
+  .card-meta {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .tag {
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .card-body { padding: 0; }
+
+  /* Table styles */
+  .info-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .info-table tr {
+    border-bottom: 1px solid var(--border);
+  }
+  .info-table tr:last-child { border-bottom: none; }
+  .info-table th {
+    width: 120px;
+    min-width: 100px;
+    padding: 14px 16px;
+    text-align: left;
+    vertical-align: top;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    background: var(--surface2);
+    border-right: 1px solid var(--border);
+  }
+  .info-table td {
+    padding: 14px 20px;
+    font-size: 14px;
+    vertical-align: top;
+  }
+  .info-table td strong {
+    color: #fff;
+  }
+
+  /* AIDA section headers inside table */
+  .aida-label {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-bottom: 6px;
+    letter-spacing: 0.5px;
+  }
+  .aida-a { background: rgba(239,68,68,0.15); color: #f87171; }
+  .aida-i { background: rgba(59,130,246,0.15); color: #60a5fa; }
+  .aida-d { background: rgba(16,185,129,0.15); color: #34d399; }
+  .aida-act { background: rgba(245,158,11,0.15); color: #fbbf24; }
+
+  .script-block {
+    margin-bottom: 16px;
+  }
+  .script-block:last-child { margin-bottom: 0; }
+  .script-block p {
+    margin-top: 4px;
+  }
+
+  .highlight-box {
+    background: rgba(255,255,255,0.03);
+    border-left: 3px solid;
+    padding: 10px 14px;
+    border-radius: 0 8px 8px 0;
+    margin-top: 8px;
+    font-size: 13px;
+  }
+
+  .quote {
+    font-style: italic;
+    color: #fbbf24;
+  }
+
+  /* Color themes per card */
+  .card-save .card-number { background: linear-gradient(135deg, #f59e0b, #d97706); }
+  .card-save .tag { background: rgba(245,158,11,0.12); color: var(--accent-save); }
+
+  .card-follow .card-number { background: linear-gradient(135deg, #3b82f6, #2563eb); }
+  .card-follow .tag { background: rgba(59,130,246,0.12); color: var(--accent-follow); }
+
+  .card-comment .card-number { background: linear-gradient(135deg, #10b981, #059669); }
+  .card-comment .tag { background: rgba(16,185,129,0.12); color: var(--accent-comment); }
+
+  .card-dm .card-number { background: linear-gradient(135deg, #ef4444, #dc2626); }
+  .card-dm .tag { background: rgba(239,68,68,0.12); color: var(--accent-dm); }
+
+  .footer-note {
+    margin-top: 32px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+  }
+  .footer-note h3 {
+    font-size: 16px;
+    margin-bottom: 14px;
+    font-weight: 700;
+  }
+  .footer-note p {
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+  }
+  .footer-note p:last-child { margin-bottom: 0; }
+
+  .tip-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 12px;
+  }
+  .tip-item {
+    background: var(--surface2);
+    padding: 12px 14px;
+    border-radius: 10px;
+    font-size: 13px;
+  }
+  .tip-item strong {
+    display: block;
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-bottom: 4px;
+    letter-spacing: 0.5px;
+  }
+
+  @media (max-width: 600px) {
+    body { padding: 12px 8px 40px; }
+    .info-table th { width: 80px; min-width: 70px; padding: 10px 8px; font-size: 11px; }
+    .info-table td { padding: 10px 12px; font-size: 13px; }
+    .card-header { padding: 14px 16px; }
+    .tip-grid { grid-template-columns: 1fr; }
+  }
 </style>
 </head>
 <body>
 
-<!-- LOADING -->
-<div id="page-loading" class="page show">
-  <div class="ring"></div>
-  <div class="loadmsg" id="load-msg">連線中...</div>
+<div class="header">
+  <h1><span class="brand">空調先生</span>｜短影片企劃</h1>
+  <p>業主：小吳 ／ 場景：新成屋配管 ／ 4 支 AIDA 腳本 ／ 藏鏡人拍攝</p>
 </div>
 
-<!-- SETUP -->
-<div id="page-setup" class="page">
-  <div class="topbar"><div><div class="tbrand" id="b-setup">打卡</div><div class="tsub">首次設定</div></div></div>
-  <div class="scroll stag">
-    <p class="sec">首次啟動</p>
-    <div class="card cp">
-      <div style="font-size:22px;font-weight:700;letter-spacing:-.03em;margin-bottom:6px">建立管理員帳號</div>
-      <div style="font-size:13px;color:var(--t2);margin-bottom:20px;line-height:1.6">設定品牌名稱、手機號碼與管理密碼，完成後此設備成為管理員設備。</div>
-      <div class="field"><div class="fl">品牌名稱</div><input type="text" class="inp" id="adm-brand" placeholder="例：珍料理、禪奈廚房..."><div class="ferr" id="e-adm-brand">請輸入品牌名稱</div></div>
-      <div class="field"><div class="fl">手機號碼</div><input type="tel" class="inp" id="adm-phone" placeholder="09xx-xxx-xxx" inputmode="tel"><div class="ferr" id="e-adm-phone">請輸入有效手機號碼</div></div>
-      <div class="field"><div class="fl">管理密碼</div><input type="password" class="inp" id="adm-pass" placeholder="4–8 位，切勿外洩"><div class="ferr" id="e-adm-pass">密碼至少 4 個字元</div></div>
-      <div class="field"><div class="fl">店鋪地址</div><input type="text" class="inp" id="adm-addr" placeholder="台北市信義區...（選填，可稍後設定）"></div>
-      <button class="btn btn-ink" id="btn-setup" onclick="setupAdmin()"><div class="sp"></div><span class="bt">啟動系統</span></button>
+<!-- ============ 影片 1 ============ -->
+<div class="video-card card-save">
+  <div class="card-header">
+    <div class="card-number">1</div>
+    <div class="card-header-text">
+      <h2>新成屋冷氣配管，這 3 筆「隱形成本」你付了都不知道！</h2>
+      <div class="card-meta">
+        <span class="tag">💾 導流：收藏</span>
+        <span class="tag">受眾：新成屋屋主</span>
+      </div>
     </div>
   </div>
+  <div class="card-body">
+    <table class="info-table">
+      <tr>
+        <th>核心切角</th>
+        <td>省錢避坑。師傅裝備越貴 → 成本轉嫁到報價單 → 教屋主看懂 3 個隱形加價點</td>
+      </tr>
+      <tr>
+        <th>客群利益</th>
+        <td>屋主驗收時有明確的檢查清單，不怕被多收冤枉錢</td>
+      </tr>
+      <tr>
+        <th>拍攝腳本</th>
+        <td>
+          <div class="script-block">
+            <span class="aida-label aida-a">A — 注意力｜前3秒</span>
+            <p><strong>畫面：</strong>特寫工具腰帶，金屬扣環「喀噠」扣上（ASMR音效），價格跳字「$28,000」</p>
+            <p><strong>字幕：</strong><span class="quote">「這套裝備兩萬八，猜猜最後誰買單？」</span></p>
+          </div>
+          <div class="script-block">
+            <span class="aida-label aida-i">I — 興趣｜4-15秒</span>
+            <p><strong>畫面：</strong>小吳拎著菜市場塑膠提袋走進新成屋，袋裡幾把基本工具</p>
+            <p><strong>字幕/口播：</strong>「做了十年冷氣，講真話——師傅裝備越貴，不代表你家裝得越好。但那些成本，最後都加在你的報價單裡。」</p>
+          </div>
+          <div class="script-block">
+            <span class="aida-label aida-d">D — 渴望｜16-40秒</span>
+            <p><strong>畫面：</strong>藏鏡人拍手部操作特寫，邊施工邊講 3 個隱形成本：</p>
+            <div class="highlight-box" style="border-color: var(--accent-save);">
+              <strong>❶ 銅管口徑：</strong>4分管 vs 5分管，一台差 $800-1,200，效率差 20%，電費年多繳 $2,000-3,000<br>
+              <strong>❷ 排水管存水彎：</strong>省那 $50 的料，半年後天花板滴水，打掉重來花 $15,000<br>
+              <strong>❸ 抽真空時間：</strong>標準 15-20 分鐘，只做 5 分鐘 → 壓縮機 3 年出問題，換一台 $12,000 起跳
+            </div>
+            <p style="margin-top:8px;"><strong>穿插畫面：</strong>量銅管口徑 → 裝存水彎 → 真空錶指針歸零特寫</p>
+          </div>
+          <div class="script-block">
+            <span class="aida-label aida-act">A — 行動｜最後5秒</span>
+            <p><strong>字幕：</strong><span class="quote">「新成屋要裝冷氣的，收藏這支，驗收時一個一個對。」</span></p>
+            <p><strong>畫面：</strong>定格在真空錶數字上</p>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <th>內容校對</th>
+        <td>全程以屋主省錢角度出發，無攻擊同行內容。數據來自實務經驗，具體可查證。CTA 明確引導收藏。</td>
+      </tr>
+    </table>
+  </div>
 </div>
 
-<!-- REGISTER -->
-<div id="page-register" class="page">
-  <div class="topbar"><div><div class="tbrand" id="b-reg">打卡</div><div class="tsub">員工申請</div></div></div>
-  <div class="scroll stag">
-    <p class="sec">申請加入</p>
-    <div class="card cp">
-      <div style="font-size:22px;font-weight:700;letter-spacing:-.03em;margin-bottom:6px">新員工申請</div>
-      <div style="font-size:13px;color:var(--t2);margin-bottom:20px;line-height:1.6">送出後等待老闆審核，通過後自動進入打卡介面。</div>
-      <div id="standalone-tip" style="display:none;background:var(--al);border:1px solid rgba(180,83,9,.18);border-radius:12px;padding:10px 14px;font-size:13px;color:rgba(100,55,0,.9);margin-bottom:16px;line-height:1.6">📲 從桌面開啟的使用者，請點下方「設備恢復」登入。</div>
-      <div class="field"><div class="fl">真實姓名</div><input type="text" class="inp" id="reg-name" placeholder="請輸入真實姓名"><div class="ferr" id="e-reg-name">姓名不能為空</div></div>
-      <div class="field"><div class="fl">手機號碼</div><input type="tel" class="inp" id="reg-phone" placeholder="09xx-xxx-xxx" inputmode="tel"><div class="ferr" id="e-reg-phone">請輸入有效手機號碼</div></div>
-      <div class="field"><div class="fl">個人密碼</div><input type="password" class="inp" id="reg-pass" placeholder="4–8 位，換設備時需要"><div class="ferr" id="e-reg-pass">密碼至少 4 個字元</div></div>
-      <button class="btn btn-ink" id="btn-reg" onclick="submitReg()"><div class="sp"></div><span class="bt">送出申請</span></button>
-      <div class="or">或</div>
-      <button class="btn btn-ghost" onclick="show('page-recover')">設備恢復 / 重新登入</button>
+<!-- ============ 影片 2 ============ -->
+<div class="video-card card-follow">
+  <div class="card-header">
+    <div class="card-number">2</div>
+    <div class="card-header-text">
+      <h2>兩萬裝備 vs. 三百提袋——十年老師傅選哪個？答案跟你想的不一樣</h2>
+      <div class="card-meta">
+        <span class="tag">➕ 導流：追蹤</span>
+        <span class="tag">受眾：新成屋屋主</span>
+      </div>
     </div>
   </div>
-</div>
-
-<!-- PENDING -->
-<div id="page-pending" class="page">
-  <div class="topbar"><div><div class="tbrand" id="b-pending">打卡</div><div class="tsub">等待審核</div></div></div>
-  <div class="pendwrap">
-    <div class="pendico">⏳</div>
-    <div style="font-size:22px;font-weight:700;margin-bottom:8px;letter-spacing:-.02em">等待審核中</div>
-    <div style="font-size:14px;color:var(--t2);line-height:1.75">申請已送出，老闆核准後<br>將自動跳轉至打卡介面</div>
-    <div class="rfind"><div class="rfdot"></div><span id="poll-status">每 5 秒自動檢查</span></div>
-    <div class="warnbox">⚠️ 審核完成前請勿清除瀏覽器資料，否則需要重新申請。</div>
-    <button class="btn btn-red" style="margin-top:22px;width:100%" onclick="cancelPending()">取消申請並重新開始</button>
+  <div class="card-body">
+    <table class="info-table">
+      <tr>
+        <th>核心切角</th>
+        <td>專業信任。以「過來人經驗」展現務實作風，強調結果導向而非器材導向</td>
+      </tr>
+      <tr>
+        <th>客群利益</th>
+        <td>屋主學會判斷師傅的專業度：看施工品質，不看裝備排場</td>
+      </tr>
+      <tr>
+        <th>拍攝腳本</th>
+        <td>
+          <div class="script-block">
+            <span class="aida-label aida-a">A — 注意力｜前3秒</span>
+            <p><strong>畫面：</strong>分割畫面。左邊＝全套裝備特寫（腰帶、空調背心充氣到最滿），右邊＝褪色菜市場提籃，裡面幾把鉗子</p>
+            <p><strong>字幕：</strong><span class="quote">「你會把家裡的冷氣交給哪一邊？」</span></p>
+          </div>
+          <div class="script-block">
+            <span class="aida-label aida-i">I — 興趣｜4-18秒</span>
+            <p><strong>畫面：</strong>小吳走進新成屋，把提袋放地上</p>
+            <p><strong>口播/字幕：</strong>「我以前也覺得工具越多越專業。入行第三年花了快三萬買全套。結果呢？腰帶太重爬梯子卡住，空調背心在天花板裡吸進去全是粉塵，咳了一個禮拜。」</p>
+          </div>
+          <div class="script-block">
+            <span class="aida-label aida-d">D — 渴望｜19-40秒</span>
+            <p><strong>口播/字幕：</strong>「後來我想通了——客人不在乎你腰上掛什麼，客人在乎的是：」</p>
+            <div class="highlight-box" style="border-color: var(--accent-follow);">
+              <strong>✓ 管路有沒有拉直拉順</strong>（畫面：銅管彎出漂亮弧度）<br>
+              <strong>✓ 銅管焊接會不會漏冷媒</strong>（畫面：焊接火花特寫）<br>
+              <strong>✓ 排水會不會倒流</strong>（畫面：排水測試，水流順暢流出）
+            </div>
+            <p style="margin-top:8px;"><strong>字幕：</strong><span class="quote">「工具值多少錢不重要，你家冷氣能吹幾年才重要。」</span></p>
+          </div>
+          <div class="script-block">
+            <span class="aida-label aida-act">A — 行動｜最後5秒</span>
+            <p><strong>口播/字幕：</strong><span class="quote">「我是空調先生，十年經驗只講乾貨。追蹤我，下一支教你怎麼看報價單不被當盤子。」</span></p>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <th>內容校對</th>
+        <td>以自身經歷論述，非攻擊同行。「過來人」身份建立信任。CTA 預告下一支內容，製造追蹤誘因。</td>
+      </tr>
+    </table>
   </div>
 </div>
 
-<!-- RECOVER -->
-<div id="page-recover" class="page">
-  <div class="topbar"><div><div class="tbrand" id="b-recover">打卡</div><div class="tsub">設備恢復</div></div><div class="icobtn" onclick="show('page-register')">←</div></div>
-  <div class="scroll stag">
-    <p class="sec">設備恢復</p>
-    <div class="card cp">
-      <div style="font-size:22px;font-weight:700;letter-spacing:-.03em;margin-bottom:6px">重新登入</div>
-      <div style="font-size:13px;color:var(--t2);margin-bottom:20px;line-height:1.6">換手機或清除資料後，輸入註冊時的手機號碼與密碼即可恢復身分。</div>
-      <div class="field"><div class="fl">手機號碼</div><input type="tel" class="inp" id="rec-phone" placeholder="09xx-xxx-xxx" inputmode="tel"></div>
-      <div class="field"><div class="fl">密碼</div><input type="password" class="inp" id="rec-pass" placeholder="註冊時設定的密碼"><div class="ferr" id="e-rec">手機號碼或密碼錯誤</div></div>
-      <button class="btn btn-ink" id="btn-recover" onclick="recoverDevice()"><div class="sp"></div><span class="bt">驗證並綁定此設備</span></button>
+<!-- ============ 影片 3 ============ -->
+<div class="video-card card-comment">
+  <div class="card-header">
+    <div class="card-number">3</div>
+    <div class="card-header-text">
+      <h2>管沒拉好，裝備再帥都是演戲！你家冷氣被雷過嗎？留言說，我陪你罵</h2>
+      <div class="card-meta">
+        <span class="tag">💬 導流：留言互動</span>
+        <span class="tag">受眾：被雷過的屋主</span>
+      </div>
     </div>
   </div>
-</div>
-
-<!-- STAFF -->
-<div id="page-staff" class="page">
-  <div class="topbar"><div><div class="tbrand" id="b-staff">打卡</div><div class="tsub" id="staff-sub">員工</div></div></div>
-  <div class="scroll">
-    <div class="tabs" id="staff-tabs"><div class="tab on" id="stab-0" onclick="stab(0)">打卡</div><div class="tab" id="stab-1" onclick="stab(1)">班表</div><div class="tab" id="stab-2" onclick="stab(2)" style="display:none">報表</div></div>
-    <!-- CHECKIN PANEL -->
-    <div id="spanel-0">
-      <div class="clockwrap">
-        <div class="clocktime" id="clk">09<span class="colon">:</span>41<span class="clocksec" id="clksec">00</span></div>
-        <div class="clockdate" id="clkdate">載入中...</div>
-      </div>
-      <div class="locrow"><div class="locbadge scan" id="locbadge"><div class="locdot"></div><span id="loctxt">定位中...</span></div></div>
-      <div class="stat3">
-        <div class="sc"><div class="sv g" id="sv-in">--:--</div><div class="sl">簽到</div></div>
-        <div class="sc"><div class="sv a" id="sv-out">--:--</div><div class="sl">簽退</div></div>
-        <div class="sc"><div class="sv b" id="sv-hrs">--</div><div class="sl">工時</div></div>
-      </div>
-      <div class="greet"><span class="greet-hi" id="greet-hi">你好，</span><b id="sname">--</b><span class="shift-count" id="shift-badge" style="display:none"></span></div>
-      <div class="ck-wrap">
-        <button class="ck-btn ck-out" id="btn-ck-out" onclick="doCheckAction('out')" disabled><div class="sp"></div><span class="ck-ico">↑</span><span class="bt">簽退</span><span class="ck-sub">下班打卡</span></button>
-        <button class="ck-btn ck-in" id="btn-ck-in" onclick="doCheckAction('in')"><div class="sp"></div><span class="ck-ico">↓</span><span class="bt">簽到</span><span class="ck-sub">上班打卡</span></button>
-      </div>
-      <div class="snote" id="snote"></div>
-      <div style="text-align:center;margin-top:18px"><a href="#" onclick="openMakeup();return false" style="font-size:13px;color:var(--t2);text-decoration:underline">忘記打卡？補打卡申請</a></div>
-      <button class="btn btn-ghost a2hs-btn" style="margin-top:14px;display:none" onclick="addToHome()">📲 加到手機桌面</button>
-    </div>
-    <!-- CALENDAR PANEL -->
-    <div id="spanel-1" style="display:none">
-      <div class="calnav">
-        <button class="cnbtn" onclick="calNav(-1)">‹</button>
-        <div class="calmonth" id="caltitle">2024年 1月</div>
-        <button class="cnbtn" onclick="calNav(1)">›</button>
-      </div>
-      <div class="caldow"><div class="dowcell">日</div><div class="dowcell">一</div><div class="dowcell">二</div><div class="dowcell">三</div><div class="dowcell">四</div><div class="dowcell">五</div><div class="dowcell">六</div></div>
-      <div class="calgrid" id="calgrid"></div>
-      <div class="daydet" id="daydet">點選日期查看出勤記錄</div>
-      <div id="note-ed" style="display:none;margin-top:10px">
-        <div class="fl" style="margin-bottom:5px;padding-left:2px">備注（選填）</div>
-        <textarea class="inp" id="note-inp" rows="2" placeholder="例：代班、提早出勤..."></textarea>
-        <button class="btn btn-ghost" style="margin-top:8px;padding:11px;font-size:14px" onclick="saveNote()">儲存備注</button>
-      </div>
-    </div>
-    <!-- DEPUTY REPORT PANEL -->
-    <div id="spanel-2" style="display:none">
-      <p class="sec">出勤報表</p>
-      <div class="filtcard">
-        <div class="field"><div class="fl">員工</div><select class="inp" id="dep-rpt-staff"><option value="">全部員工</option></select></div>
-        <div class="drow">
-          <div class="field"><div class="fl">開始日期</div><input type="date" class="inp" id="dep-rpt-from"></div>
-          <div class="field"><div class="fl">結束日期</div><input type="date" class="inp" id="dep-rpt-to"></div>
-        </div>
-        <button class="btn btn-ink" id="btn-dep-rpt" onclick="loadDepReport()"><div class="sp"></div><span class="bt">查詢</span></button>
-      </div>
-      <div id="dep-rep-result" style="display:none">
-        <div class="repwrap"><div class="repscroll"><table class="rt"><thead><tr><th>日期</th><th>姓名</th><th>簽到</th><th>簽退</th><th>工時</th><th>狀態</th></tr></thead><tbody id="dep-rep-tbody"></tbody><tfoot><tr class="totrow" id="dep-rep-tfoot"></tr></tfoot></table></div></div>
-      </div>
-      <div id="dep-rep-empty" class="repempty" style="display:none">無符合條件的紀錄</div>
-    </div>
+  <div class="card-body">
+    <table class="info-table">
+      <tr>
+        <th>核心切角</th>
+        <td>情緒共鳴 + 排雷。引導屋主說出慘痛經驗，以專家身份回覆建議，建立社群黏性</td>
+      </tr>
+      <tr>
+        <th>客群利益</th>
+        <td>屋主找到「懂他們痛的師傅」，留言區變成免費諮詢＋信任建立場域</td>
+      </tr>
+      <tr>
+        <th>拍攝腳本</th>
+        <td>
+          <div class="script-block">
+            <span class="aida-label aida-a">A — 注意力｜前3秒</span>
+            <p><strong>畫面：</strong>一面新成屋白牆，突然滴下一滴水，慢動作＋「滴——」音效放大</p>
+            <p><strong>字幕：</strong><span class="quote">「裝好不到半年，天花板就哭了。」</span></p>
+          </div>
+          <div class="script-block">
+            <span class="aida-label aida-i">I — 興趣｜4-15秒</span>
+            <p><strong>口播/字幕：</strong>「這種案例我一年接到少說二十幾件。屋主花了錢，結果排水管沒接好、銅管沒包保溫、真空根本沒抽——然後師傅電話就不接了。」</p>
+            <p><strong>畫面：</strong>小吳在現場仔細包覆保溫材、確認每個接頭</p>
+          </div>
+          <div class="script-block">
+            <span class="aida-label aida-d">D — 渴望｜16-35秒</span>
+            <p><strong>口播/字幕：</strong>「我自己剛入行也犯過錯。有一次排水管斜度沒抓好，客人家三個月後漏水。我自己花錢回去全部拆掉重做。」</p>
+            <div class="highlight-box" style="border-color: var(--accent-comment);">
+              「從那次之後——」<br>
+              <strong>▸ 每條排水管用水平尺量</strong>（畫面：水平尺靠管，氣泡居中）<br>
+              <strong>▸ 每台抽真空至少 15 分鐘</strong>（畫面：真空錶讀數特寫）<br>
+              <strong>▸ 做完拍照存檔給客人</strong>（畫面：手機拍完工照）
+            </div>
+            <p style="margin-top:8px;"><strong>字幕：</strong><span class="quote">「踩過的坑，變成我現在的 SOP。」</span></p>
+          </div>
+          <div class="script-block">
+            <span class="aida-label aida-act">A — 行動｜最後5秒</span>
+            <p><strong>字幕放大：</strong><span class="quote">「你家冷氣有被雷過嗎？裝沒多久就漏水？冷媒一直不冷？留言說出來，我陪你吐槽，能幫的直接回你。」</span></p>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <th>內容校對</th>
+        <td>用自身犯錯經歷帶入，非針對特定同行。留言 CTA 具體描述 2 種常見災情引導屋主開口，增加留言權重。</td>
+      </tr>
+    </table>
   </div>
 </div>
 
-<!-- ADMIN -->
-<div id="page-admin" class="page">
-  <div class="topbar"><div><div class="tbrand" id="b-admin">打卡</div><div class="tsub">管理後台</div></div><div class="icobtn" onclick="openBrandSheet()">✎</div></div>
-  <div class="scroll">
-    <div class="tabs"><div class="tab on" id="atab-0" onclick="atab(0)">報表</div><div class="tab" id="atab-1" onclick="atab(1)">設定</div></div>
-    <!-- ADMIN PANEL 1: REPORT -->
-    <div id="apanel-0" >
-      <div id="admin-pending-sec" style="display:none">
-        <p class="sec">待審核員工 <span class="pchip" id="pcount">0</span></p>
-        <div id="admin-pending-list"></div>
+<!-- ============ 影片 4 ============ -->
+<div class="video-card card-dm">
+  <div class="card-header">
+    <div class="card-number">4</div>
+    <div class="card-header-text">
+      <h2>新成屋配管怎麼選師傅？別看腰上掛什麼，問他這 2 個數字就夠了</h2>
+      <div class="card-meta">
+        <span class="tag">📩 導流：私訊詢價</span>
+        <span class="tag">受眾：準備裝冷氣的屋主</span>
       </div>
-      <div id="admin-makeup-sec" style="display:none">
-        <p class="sec">補打卡審核 <span class="pchip" id="mkcount">0</span></p>
-        <div id="admin-makeup-list"></div>
-      </div>
-      <p class="sec">出勤報表</p>
-      <div class="filtcard">
-        <div class="field"><div class="fl">員工</div><select class="inp" id="rpt-staff"><option value="">全部員工</option></select></div>
-        <div class="drow">
-          <div class="field"><div class="fl">開始日期</div><input type="date" class="inp" id="rpt-from"></div>
-          <div class="field"><div class="fl">結束日期</div><input type="date" class="inp" id="rpt-to"></div>
-        </div>
-        <button class="btn btn-ink" id="btn-rpt" onclick="loadReport()"><div class="sp"></div><span class="bt">查詢</span></button>
-      </div>
-      <div id="rep-result" style="display:none">
-        <div class="repwrap"><div class="repscroll">
-          <table class="rt">
-            <thead><tr><th>日期</th><th>姓名</th><th>簽到</th><th>簽退</th><th>工時</th><th>狀態</th></tr></thead>
-            <tbody id="rep-tbody"></tbody>
-            <tfoot><tr class="totrow" id="rep-tfoot"></tr></tfoot>
-          </table>
-        </div></div>
-        <div class="exrow">
-          <button class="btn btn-ghost" onclick="exportCSV()">匯出 CSV</button>
-          <button class="btn btn-blue" onclick="exportXLSX()">下載 XLSX</button>
-        </div>
-      </div>
-      <div id="rep-empty" class="repempty" style="display:none">無符合條件的紀錄</div>
-    </div>
-    <!-- ADMIN PANEL 0 -->
-    <div id="apanel-1"style="display:none">
-      <p class="sec">店鋪設定</p>
-      <div class="setrow" onclick="toggleCol('addr-col')">
-        <div class="setico">📍</div>
-        <div class="setbody"><div class="setname">店鋪地址</div><div class="setdesc" id="addr-disp">尚未設定</div></div>
-        <div class="setarrow">›</div>
-      </div>
-      <div class="collap" id="addr-col">
-        <div style="padding:4px 0 14px">
-          <input type="text" class="inp" id="shop-addr-inp" placeholder="台北市信義區...">
-          <button class="btn btn-blue" style="margin-top:8px" id="btn-addr" onclick="updateAddr()"><div class="sp"></div><span class="bt">同步 GPS 座標</span></button>
-        </div>
-      </div>
-      <div class="setrow" style="cursor:default;margin-bottom:0">
-        <div class="setico">📶</div>
-        <div class="setbody"><div class="setname">WiFi 網路驗證</div><div class="setdesc">員工須在店內網路才能打卡</div></div>
-        <label class="tgl"><input type="checkbox" id="wifi-tgl" onchange="toggleWifi()"><span class="ttr"></span></label>
-      </div>
-      <div class="collap" id="wifi-col">
-        <div style="padding:6px 0 14px">
-          <div style="background:var(--gl);border:1px solid rgba(21,128,61,.18);border-radius:12px;padding:10px 14px;font-size:13px;color:rgba(0,80,30,.9);margin-bottom:8px">📶 目前連線：<b id="conn-type">偵測中...</b><br><span style="font-size:11px;color:var(--t2)">IP: <span id="ip-disp">讀取中...</span></span></div>
-          <button class="btn btn-blue" onclick="lockIP()">🔒 鎖定目前網路（店內 WiFi）</button>
-          <div style="font-size:11px;color:var(--t2);margin-top:6px;padding:0 4px">ℹ️ 請在店內連上 WiFi 後點擊鎖定，員工必須在同一網路下才能打卡</div>
-        </div>
-      </div>
-      <p class="sec">工時設定</p>
-      <div class="card cp" style="margin-bottom:12px">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-          <div class="field"><div class="fl">標準工時(h)</div><input type="number" class="inp" id="cfg-std-hrs" value="8" min="1" max="24" style="font-size:14px;padding:10px 12px"></div>
-          <div class="field"><div class="fl">修約(min)</div><input type="number" class="inp" id="cfg-round" value="1" min="1" max="60" style="font-size:14px;padding:10px 12px"></div>
-        </div>
-        <div style="font-size:11px;color:var(--t2);margin:4px 0 10px;line-height:1.6">• 工時超過標準 → 自動標註「超時」<br>• 修約 = 工時每 N 分鐘無條件捨去</div>
-        <button class="btn btn-ink" id="btn-save-cfg" onclick="saveShopCfg()"><div class="sp"></div><span class="bt">儲存設定</span></button>
-      </div>
-      <div id="admin-staff-sec" style="display:none">
-        <p class="sec">員工管理</p>
-        <div id="admin-staff-list"></div>
-      </div>
-      <button class="btn btn-ghost a2hs-btn" style="margin-top:14px;display:none" onclick="addToHome()">📲 加到手機桌面</button>
-      <p class="sec">帳號</p>
-      <button class="btn btn-red" onclick="show('page-logout')">切換帳號 / 登出</button>
-    </div>
-    
-  </div>
-</div>
-
-<!-- LOGOUT -->
-<div id="page-logout" class="page">
-  <div class="topbar"><div class="tbrand">確認登出</div></div>
-  <div class="logpg">
-    <div class="stag" style="text-align:center;width:100%">
-      <div style="font-size:52px;margin-bottom:16px">👋</div>
-      <div style="font-size:22px;font-weight:700;margin-bottom:10px;letter-spacing:-.02em">確認登出？</div>
-      <div style="font-size:14px;color:var(--t2);line-height:1.85;margin-bottom:26px">登出後本機身分記錄將被清除。<br>可透過「設備恢復」以手機+密碼重新登入。</div>
-      <button class="btn btn-red" style="margin-bottom:10px" onclick="logout()">確認登出</button>
-      <button class="btn btn-ghost" onclick="goBack()">取消</button>
     </div>
   </div>
-</div>
-
-<div id="toast"></div>
-
-<!-- MAKEUP SHEET -->
-<div class="ovl" id="makeup-ovl" onclick="closeMakeup(event)">
-  <div class="sheet">
-    <div class="shandle"></div>
-    <div class="stitle">補打卡申請</div>
-    <div class="field"><div class="fl">日期</div><input type="date" class="inp" id="mk-date"></div>
-    <div class="field"><div class="fl">時間</div><input type="time" class="inp" id="mk-time"></div>
-    <div class="field"><div class="fl">類型</div><select class="inp" id="mk-type"><option value="簽到">簽到（上班）</option><option value="簽退">簽退（下班）</option></select></div>
-    <div class="field" id="mk-shift-wrap" style="display:none"><div class="fl">第幾班</div><select class="inp" id="mk-shift"><option value="1">第 1 班</option></select></div>
-    <div class="field"><div class="fl">原因</div><textarea class="inp" id="mk-reason" rows="2" placeholder="例：忘記打卡、手機沒電..."></textarea></div>
-    <button class="btn btn-ink" id="btn-mk" onclick="submitMakeup()"><div class="sp"></div><span class="bt">送出申請</span></button>
-    <button class="btn btn-ghost" style="margin-top:8px" onclick="closeMakeup()">取消</button>
+  <div class="card-body">
+    <table class="info-table">
+      <tr>
+        <th>核心切角</th>
+        <td>品質保證 → 直接成交。教屋主用 2 個數字篩選師傅，最後導入免費諮詢私訊</td>
+      </tr>
+      <tr>
+        <th>客群利益</th>
+        <td>屋主拿到簡單好記的「面試題」，問兩句就能判斷師傅專業度</td>
+      </tr>
+      <tr>
+        <th>拍攝腳本</th>
+        <td>
+          <div class="script-block">
+            <span class="aida-label aida-a">A — 注意力｜前3秒</span>
+            <p><strong>畫面：</strong>小吳蹲在地上，提袋在旁，手上拿真空錶，指針在動</p>
+            <p><strong>字幕：</strong><span class="quote">「會回答這兩個數字的師傅，才值得你付錢。」</span></p>
+          </div>
+          <div class="script-block">
+            <span class="aida-label aida-i">I — 興趣｜4-15秒</span>
+            <p><strong>口播/字幕：</strong>「新成屋裝冷氣，很多屋主第一個問的是——多少錢？但你更該問的是這兩件事。」</p>
+          </div>
+          <div class="script-block">
+            <span class="aida-label aida-d">D — 渴望｜16-40秒</span>
+            <div class="highlight-box" style="border-color: var(--accent-dm);">
+              <strong>數字 ❶ 抽真空幾分鐘？</strong><br>
+              業界標準 ≥ 15 分鐘。只做 3-5 分鐘 → 管內殘留水氣 → 壓縮機壽命砍半<br>
+              （畫面：真空錶歸零 ＋ 手機計時器 15:00）<br><br>
+              <strong>數字 ❷ 排水管坡度幾公分？</strong><br>
+              每米至少 1cm 落差。不夠 → 排不掉 → 半年後漏水發霉<br>
+              （畫面：水平尺放排水管，氣泡居中）
+            </div>
+            <p style="margin-top:8px;"><strong>字幕：</strong><span class="quote">「兩個數字，篩掉 80% 不及格的師傅。」</span></p>
+          </div>
+          <div class="script-block">
+            <span class="aida-label aida-act">A — 行動｜最後5秒</span>
+            <p><strong>口播/字幕：</strong><span class="quote">「新成屋要裝冷氣，不知道怎麼挑師傅的，私訊我。報你的坪數跟幾台，我直接跟你說合理價格區間。不收錢，交個朋友。」</span></p>
+            <p><strong>字幕壓底：</strong>空調先生｜私訊免費諮詢</p>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <th>內容校對</th>
+        <td>全程教屋主「怎麼挑」而非「別找誰」，無潑同行髒水風險。CTA 降低私訊門檻（免費＋交朋友），有效導流詢價。</td>
+      </tr>
+    </table>
   </div>
 </div>
 
-<!-- BRAND SHEET -->
-<div class="ovl" id="brand-ovl" onclick="closeBrand(event)">
-  <div class="sheet">
-    <div class="shandle"></div>
-    <div class="stitle">修改品牌名稱</div>
-    <div class="field"><div class="fl">顯示名稱</div><input type="text" class="inp" id="modal-brand" placeholder="輸入品牌名稱"></div>
-    <button class="btn btn-ink" onclick="saveBrand()">儲存</button>
-    <button class="btn btn-ghost" style="margin-top:8px" onclick="closeBrand()">取消</button>
+<!-- ============ 通用拍攝提醒 ============ -->
+<div class="footer-note">
+  <h3>🎬 4 支通用拍攝提醒</h3>
+  <div class="tip-grid">
+    <div class="tip-item">
+      <strong>🔊 音效記憶點</strong>
+      前 3 秒必備：金屬扣環「喀噠」聲、水滴聲、真空錶嘶嘶聲（ASMR 感拉完播率）
+    </div>
+    <div class="tip-item">
+      <strong>🔢 數字視覺化</strong>
+      所有數字（$800、15分鐘、1公分）用大字幕打在畫面上，滑過去也能接收資訊
+    </div>
+    <div class="tip-item">
+      <strong>📷 藏鏡人拍法</strong>
+      不用露臉，拍手部操作特寫＋字幕就很有質感。重點拍：彎管、焊接、真空錶、水平尺
+    </div>
+    <div class="tip-item">
+      <strong>⏱ 一天拍完</strong>
+      4 支在同一個新成屋現場一次拍完，換不同施工階段畫面即可，省時高效
+    </div>
   </div>
+  <p style="margin-top: 16px; color: var(--text-dim); font-size: 12px;">
+    ※ 全部腳本已校對：受眾＝新成屋客人（非同行）、無攻擊同行內容、數據具體可驗證、CTA 各自對應不同導流目標。
+  </p>
 </div>
 
-<!-- A2HS GUIDE SHEET -->
-<div class="ovl" id="a2hs-ovl" onclick="closeA2HS(event)">
-  <div class="sheet">
-    <div class="shandle"></div>
-    <div id="a2hs-body"></div>
-    <button class="btn btn-ghost" style="margin-top:16px" onclick="closeA2HS()">知道了</button>
-  </div>
-</div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script>
-/* ══ CONFIG ══ */
-const SCRIPT_URL="https://script.google.com/macros/s/AKfycbzZXbAEkCyZkGq22peILQeI7Vgo2fw6iFVdCdafd8M0z737ot1_SjJjkG4PusXYssxP/exec";
-
-/* ══ STATE ══ */
-let UID=ls('u_uid')||'U'+rnd(),ROLE=ls('u_role'),NAME=ls('u_name'),BRAND=ls('u_brand')||'打卡';
-let myIP='0.0.0.0',myLat=null,myLng=null,geoOk=false,shopInfo=null;
-let recs={},calY,calM,selDate=null,prevPage=null,pollTimer=null,retries=0;
-let reportData=[],staffList=[];
-let openShiftTime=null,shiftCount=0;
-set('u_uid',UID);
-applyBrand(BRAND);
-
-/* ══ UTILS ══ */
-function ls(k){return localStorage.getItem(k)}
-function set(k,v){localStorage.setItem(k,v)}
-function rnd(){return Math.random().toString(36).substr(2,9)}
-function pad(n){return String(n).padStart(2,'0')}
-function td(){const n=new Date();return n.getFullYear()+pad(n.getMonth()+1)+pad(n.getDate())}
-function fmtD(s){return s.slice(0,4)+'/'+s.slice(4,6)+'/'+s.slice(6,8)}
-/* Parse "HH:mm" only — fixes the 1899 date bug */
-function parseTime(t){
-  if(!t) return null;
-  const s=String(t).trim();
-  /* Handle full ISO or Date objects just in case */
-  if(s.includes('T')||s.includes('-')){
-    const d=new Date(s);
-    if(!isNaN(d)) return pad(d.getHours())+':'+pad(d.getMinutes());
-  }
-  const m=s.match(/(\d{1,2}):(\d{2})/);
-  if(m) return pad(parseInt(m[1]))+':'+pad(parseInt(m[2]));
-  return null;
-}
-function calcHrs(i,o){
-  const it=parseTime(i),ot=parseTime(o);
-  if(!it||!ot) return null;
-  const [ih,im]=it.split(':').map(Number),[oh,om]=ot.split(':').map(Number);
-  const mins=(oh*60+om)-(ih*60+im);
-  if(mins<=0) return null;
-  const h=Math.floor(mins/60),m=mins%60;
-  return m>0?(h+'.'+Math.round(m/6)):String(h);
-}
-function toMins(i,o){
-  const it=parseTime(i),ot=parseTime(o);
-  if(!it||!ot)return 0;
-  const [ih,im]=it.split(':').map(Number),[oh,om]=ot.split(':').map(Number);
-  const mins=(oh*60+om)-(ih*60+im);return mins>0?mins:0;
-}
-function fmtMins(m){if(!m||m<=0)return'--';const h=Math.floor(m/60),r=m%60;return r>0?h+'h '+r+'m':h+'h'}
-
-let toastT;
-function toast(msg,type='ok',ms=2700){
-  const e=document.getElementById('toast');
-  e.textContent=(type==='ok'?'✓ ':type==='fail'?'✕ ':'')+msg;
-  e.className='on '+type; clearTimeout(toastT);
-  toastT=setTimeout(()=>e.className='',ms);
-}
-function show(id){if(id!=='page-logout')prevPage=id;document.querySelectorAll('.page').forEach(p=>p.classList.remove('show'));document.getElementById(id).classList.add('show')}
-function goBack(){if(prevPage)show(prevPage)}
-function applyBrand(n){BRAND=n||'打卡';set('u_brand',BRAND);['setup','reg','pending','recover','staff','admin'].forEach(id=>{const e=document.getElementById('b-'+id);if(e)e.textContent=BRAND});document.getElementById('doc-title').textContent=BRAND;document.title=BRAND}
-
-async function api(p,ms=13000){
-  const ac=new AbortController(),t=setTimeout(()=>ac.abort(),ms);
-  const encoded=btoa(unescape(encodeURIComponent(JSON.stringify(p))));
-  try{const r=await fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify({d:encoded}),signal:ac.signal});clearTimeout(t);return await r.json()}catch(e){clearTimeout(t);throw e}
-}
-
-/* ══ CLOCK ══ */
-const DOW=['日','一','二','三','四','五','六'];
-function tick(){
-  const n=new Date(),hh=pad(n.getHours()),mm=pad(n.getMinutes()),ss=pad(n.getSeconds());
-  const c=document.getElementById('clk');
-  if(c)c.innerHTML=hh+'<span class="colon">:</span>'+mm+'<span class="clocksec">'+ss+'</span>';
-  const d=document.getElementById('clkdate');
-  if(d)d.textContent=n.getFullYear()+'/'+pad(n.getMonth()+1)+'/'+pad(n.getDate())+' 星期'+DOW[n.getDay()];
-}
-setInterval(tick,1000);tick();
-
-/* ══ GEO ══ */
-let geoWatchId=null;
-function startGeo(){
-  if(!navigator.geolocation){updateLoc(true);return}
-  /* 先檢查權限狀態，避免重複提示 */
-  if(navigator.permissions){
-    navigator.permissions.query({name:'geolocation'}).then(perm=>{
-      if(perm.state==='denied'){updateLoc(true);return}
-      _watchGeo();
-      perm.addEventListener('change',()=>{
-        if(perm.state==='denied'){updateLoc(true);if(geoWatchId!==null){navigator.geolocation.clearWatch(geoWatchId);geoWatchId=null}}
-        else _watchGeo();
-      });
-    }).catch(()=>_watchGeo());
-  }else{_watchGeo()}
-}
-function _watchGeo(){
-  if(geoWatchId!==null) navigator.geolocation.clearWatch(geoWatchId);
-  geoWatchId=navigator.geolocation.watchPosition(
-    p=>{myLat=p.coords.latitude;myLng=p.coords.longitude;geoOk=true;updateLoc()},
-    ()=>{if(!geoOk)updateLoc(true)},
-    {enableHighAccuracy:true,timeout:15000,maximumAge:30000}
-  );
-}
-function updateLoc(fail){
-  const b=document.getElementById('locbadge'),t=document.getElementById('loctxt');
-  if(!b)return;
-  if(fail){b.className='locbadge fail';t.textContent='無法取得位置，點此重試';b.style.cursor='pointer';b.onclick=retryGeo;return}
-  if(!geoOk||!shopInfo){b.className='locbadge scan';t.textContent='定位中...';return}
-  const d=hvs(myLat,myLng,shopInfo[1],shopInfo[2]);
-  if(d<=shopInfo[3]){b.className='locbadge ok';t.textContent='在範圍內 · '+Math.round(d)+'m'}
-  else{b.className='locbadge fail';t.textContent='距離過遠 · '+Math.round(d)+'m'}
-}
-function hvs(a,b,c,d){const R=6371e3,dA=(c-a)*Math.PI/180,dB=(d-b)*Math.PI/180;const x=Math.sin(dA/2)**2+Math.cos(a*Math.PI/180)*Math.cos(c*Math.PI/180)*Math.sin(dB/2)**2;return R*2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x))}
-function retryGeo(){
-  const b=document.getElementById('locbadge'),t=document.getElementById('loctxt');
-  if(b){b.className='locbadge scan';t.textContent='重新定位中...';b.style.cursor='';b.onclick=null}
-  geoOk=false;
-  if(geoWatchId!==null){navigator.geolocation.clearWatch(geoWatchId);geoWatchId=null}
-  navigator.geolocation.getCurrentPosition(
-    p=>{myLat=p.coords.latitude;myLng=p.coords.longitude;geoOk=true;updateLoc();_watchGeo()},
-    err=>{
-      updateLoc(true);
-      if(err.code===1){
-        const iOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
-        if(iOS) toast('請到 iPhone 設定 → Safari → 位置 → 設為「詢問」後重新整理','fail',8000);
-        else toast('請點網址列 🔒 圖示 → 權限 → 位置 → 允許','fail',8000);
-      }else toast('定位失敗，請確認 GPS 已開啟','fail',4000);
-    },
-    {enableHighAccuracy:true,timeout:10000}
-  );
-}
-
-/* ══ INIT ══ */
-async function init(){
-  fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d=>{myIP=d.ip;const e=document.getElementById('ip-disp');if(e)e.textContent=myIP}).catch(()=>{});
-  detectConn();
-  if(ROLE==='ADMIN')show('page-admin');
-  else if(ROLE==='DEPUTY'||ROLE==='STAFF'){show('page-staff');startGeo()}
-  else if(ROLE==='PENDING'){show('page-pending');startPoll()}
-  try{
-    document.getElementById('load-msg').textContent=retries>0?'重試中 ('+retries+'/3)...':'連線中...';
-    const res=await api({action:'initUser',uid:UID});
-    hideLoading();
-    if(res.role){set('u_role',res.role);ROLE=res.role}
-    if(res.name){set('u_name',res.name);NAME=res.name}
-    if(res.brand)applyBrand(res.brand);
-    if(res.shopInfo)shopInfo=res.shopInfo;
-    if(res.role==='FIRST_LOGIN')show('page-setup');
-    else if(res.role==='GUEST'){
-      const sa=window.matchMedia('(display-mode:standalone)').matches||navigator.standalone;
-      if(sa){show('page-recover');toast('面版首次開啟，請用手機+密碼登入','ok',4000)}
-      else show('page-register');
-    }
-    else if(res.role==='PENDING'){show('page-pending');startPoll()}
-    else if(res.role==='ADMIN'){show('page-admin');renderAdmin(res)}
-    else if(res.role==='DEPUTY'||res.role==='STAFF'){show('page-staff');renderStaff(res);startGeo();loadMyRecs()}
-  }catch(e){
-    retries++;
-    if(retries<=3){setTimeout(init,3000)}
-    else{
-      hideLoading();toast('連線失敗，離線模式','fail',4000);
-      if(ROLE==='ADMIN')show('page-admin');
-      else if(ROLE==='DEPUTY'||ROLE==='STAFF'){show('page-staff');document.getElementById('sname').textContent=NAME||'--';startGeo()}
-      else if(ROLE==='PENDING'){show('page-pending');startPoll()}
-      else show('page-register');
-    }
-  }
-}
-function hideLoading(){const s=document.getElementById('page-loading');s.style.opacity='0';s.style.transition='opacity .35s';setTimeout(()=>{s.classList.remove('show');s.style.display='none'},350)}
-
-/* ══ PENDING POLL ══ */
-let pollCD=5;
-function startPoll(){
-  clearInterval(pollTimer);pollCD=5;
-  pollTimer=setInterval(async()=>{
-    pollCD--;
-    const el=document.getElementById('poll-status');
-    if(el)el.textContent=pollCD<=0?'正在檢查...':'每 5 秒自動檢查 ('+pollCD+'s)';
-    if(pollCD<=0){
-      pollCD=5;
-      try{
-        const res=await api({action:'initUser',uid:UID});
-        if(res.role==='STAFF'||res.role==='DEPUTY'){
-          clearInterval(pollTimer);
-          set('u_role',res.role);if(res.name){set('u_name',res.name);NAME=res.name}
-          if(res.shopInfo)shopInfo=res.shopInfo;if(res.brand)applyBrand(res.brand);
-          toast('🎉 審核通過！歡迎 '+res.name,'ok',3500);
-          setTimeout(()=>{show('page-staff');renderStaff(res);startGeo();loadMyRecs()},700);
-        }
-      }catch(_){}
-    }
-  },1000);
-}
-function cancelPending(){clearInterval(pollTimer);logout()}
-
-/* ══ RENDER ══ */
-function renderStaff(res){
-  document.getElementById('sname').textContent=res.name||NAME||'--';
-  if(res.shopInfo){shopInfo=res.shopInfo;updateLoc()}
-  if(res.brand)applyBrand(res.brand);
-  const sub=document.getElementById('staff-sub'),depTab=document.getElementById('stab-2');
-  if(res.role==='DEPUTY'){
-    ROLE='DEPUTY';set('u_role','DEPUTY');
-    if(sub)sub.textContent='管理員';if(depTab)depTab.style.display='';
-    if(res.allStaff){const sel=document.getElementById('dep-rpt-staff');if(sel){sel.innerHTML='<option value="">全部員工</option>';res.allStaff.forEach(s=>{sel.innerHTML+=`<option value="${s.uid}">${s.name}</option>`})}}
-    const n=new Date(),y=n.getFullYear(),m=pad(n.getMonth()+1),ld=new Date(y,n.getMonth()+1,0).getDate();
-    const df=document.getElementById('dep-rpt-from'),dt=document.getElementById('dep-rpt-to');
-    if(df)df.value=`${y}-${m}-01`;if(dt)dt.value=`${y}-${m}-${pad(ld)}`;
-  }else{if(sub)sub.textContent='員工';if(depTab)depTab.style.display='none'}
-  updateHint();
-}
-function renderAdmin(res){
-  if(res.brand)applyBrand(res.brand);
-  if(res.shopInfo){
-    shopInfo=res.shopInfo;
-    if(res.shopInfo[5]&&res.shopInfo[5]!=='尚未設定地址')document.getElementById('addr-disp').textContent=res.shopInfo[5];
-    document.getElementById('wifi-tgl').checked=!!res.shopInfo[6];
-    document.getElementById('wifi-col').classList.toggle('on',!!res.shopInfo[6]);
-    /* 工時設定 */
-    const cfgRound=document.getElementById('cfg-round'),cfgStd=document.getElementById('cfg-std-hrs');
-    if(cfgRound)cfgRound.value=parseInt(res.shopInfo[7])||1;
-    if(cfgStd)cfgStd.value=Math.round((parseInt(res.shopInfo[8])||480)/60);
-  }
-  if(res.pending&&res.pending.length>0){
-    document.getElementById('admin-pending-sec').style.display='block';
-    document.getElementById('pcount').textContent=res.pending.length;
-    const list=document.getElementById('admin-pending-list');list.innerHTML='';
-    res.pending.forEach(u=>{
-      const d=document.createElement('div');d.className='staffcard';
-      d.innerHTML=`<div class="ava">${(u.name||'?').slice(0,2)}</div><div style="flex:1"><div class="snm">${u.name}</div><div class="sph">${u.phone}</div></div><button class="appbtn" onclick="approve('${u.targetUid}')">核准</button>`;
-      list.appendChild(d);
-    });
-  }else{
-    document.getElementById('admin-pending-sec').style.display='none';
-  }
-  if(res.makeup)renderMakeupAdmin(res.makeup);
-  if(res.allStaff){
-    staffList=res.allStaff;
-    const sel=document.getElementById('rpt-staff');
-    sel.innerHTML='<option value="">全部員工</option>';
-    res.allStaff.forEach(s=>sel.innerHTML+=`<option value="${s.uid}">${s.name}</option>`);
-  }
-  const n=new Date(),y=n.getFullYear(),m=pad(n.getMonth()+1),ld=new Date(y,n.getMonth()+1,0).getDate();
-  document.getElementById('rpt-from').value=`${y}-${m}-01`;
-  document.getElementById('rpt-to').value=`${y}-${m}-${pad(ld)}`;
-  /* Staff management */
-  if(res.allStaff&&res.allStaff.length>0){
-    document.getElementById('admin-staff-sec').style.display='block';
-    const sl=document.getElementById('admin-staff-list');sl.innerHTML='';
-    res.allStaff.forEach(s=>{
-      const d=document.createElement('div');d.className='staffrow';
-      d.innerHTML=`<div class="ava">${(s.name||'?').slice(0,2)}</div><div style="flex:1"><div class="snm">${s.name}</div><div class="sph">${(s.role==='副店長'||s.role==='管理員')?'管理員':s.role||'員工'}</div></div><select class="inp" style="width:auto;padding:8px 30px 8px 12px;font-size:13px;border-radius:10px" onchange="promoteStaff('${s.uid}',this.value)"><option value="員工"${s.role==='員工'||!s.role?' selected':''}>員工</option><option value="管理員"${s.role==='副店長'||s.role==='管理員'?' selected':''}>管理員</option></select>`;
-      sl.appendChild(d);
-    });
-  }
-}
-
-/* ══ ATTENDANCE ══ */
-async function loadMyRecs(){
-  try{
-    const res=await api({action:'getMyAttendance',uid:UID});
-    if(res.records){
-      recs={};
-      res.records.forEach(r=>{
-        const it=parseTime(r.in),ot=parseTime(r.out);
-        if(!recs[r.date])recs[r.date]=[];
-        recs[r.date].push({in:it||'',out:ot||'',hrs:r.hrs||'',note:r.note||'',dateUid:r.dateUid||'',shift:r.shift||1});
-      });
-    }
-    updateStats();renderCal();
-  }catch(_){updateStats()}
-}
-function updateStats(){
-  const arr=recs[td()];
-  openShiftTime=null;shiftCount=0;
-  const btnOut=document.getElementById('btn-ck-out');
-  if(arr&&arr.length>0){
-    shiftCount=arr.length;
-    const last=arr[arr.length-1];
-    document.getElementById('sv-in').textContent=last.in||'--:--';
-    document.getElementById('sv-out').textContent=last.out||'--:--';
-    let openShift=null;
-    for(let i=arr.length-1;i>=0;i--){if(arr[i].in&&!arr[i].out){openShift=arr[i];break}}
-    if(openShift){
-      document.getElementById('sv-hrs').textContent='進行中';openShiftTime=openShift.in;
-      if(btnOut)btnOut.disabled=false;
-    }else{
-      let totalMins=0;
-      arr.forEach(s=>{if(s.in&&s.out)totalMins+=toMins(s.in,s.out)});
-      document.getElementById('sv-hrs').textContent=totalMins>0?fmtMins(totalMins):'--';
-      if(btnOut)btnOut.disabled=true;
-    }
-  }else{
-    document.getElementById('sv-in').textContent='--:--';
-    document.getElementById('sv-out').textContent='--:--';
-    document.getElementById('sv-hrs').textContent='--';
-    if(btnOut)btnOut.disabled=true;
-  }
-  const badge=document.getElementById('shift-badge');
-  if(badge){if(shiftCount>1){badge.style.display='inline';badge.textContent='今日第'+shiftCount+'班'}else badge.style.display='none'}
-  updateHint();
-}
-function updateHint(){
-  const gh=document.getElementById('greet-hi');
-  if(gh){const hr=new Date().getHours();gh.textContent=(hr<12?'早安，':hr<18?'午安，':'晚安，')}
-}
-
-/* ══ CHECK ACTION ══ */
-async function doCheckAction(type){
-  const btnIn=document.getElementById('btn-ck-in'),btnOut=document.getElementById('btn-ck-out');
-  const btn=type==='in'?btnIn:btnOut,note=document.getElementById('snote');
-  if(!geoOk){toast('請先允許定位權限（點擊上方定位徽章重試）','fail',4000);return}
-  if(shopInfo){const d=hvs(myLat,myLng,shopInfo[1],shopInfo[2]);if(d>shopInfo[3]){toast('距離過遠 ('+Math.round(d)+'m)','fail');return}}
-  if(type==='in'&&openShiftTime){toast('⚠️ 提醒：上一班 '+openShiftTime+' 尚未簽退','fail',3500)}
-  btn.classList.add('ld');btnIn.disabled=true;btnOut.disabled=true;note.textContent='打卡中...';
-  try{
-    const r=await api({action:'checkIn',uid:UID,lat:myLat,lng:myLng,ip:myIP,name:NAME||ls('u_name'),forceType:type});
-    if(r.success){toast(r.msg||'打卡成功','ok');note.textContent=r.msg||'';if(r.isOvertime)toast('⚠️ 本班工時超過標準，已標註超時','fail',5000)}
-    else{toast(r.msg||'打卡失敗','fail');note.textContent=''}
-    await loadMyRecs();
-  }catch(_){toast('連線失敗，請重試','fail');note.textContent=''}
-  finally{btn.classList.remove('ld');btnIn.disabled=false;setTimeout(()=>{note.textContent=''},3000)}
-}
-
-/* ══ CALENDAR ══ */
-const MNTH=['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月'];
-function initCal(){const n=new Date();calY=n.getFullYear();calM=n.getMonth();renderCal()}
-function calNav(d){calM+=d;if(calM>11){calM=0;calY++}if(calM<0){calM=11;calY--}renderCal()}
-function renderCal(){
-  if(calY===undefined){initCal();return}
-  document.getElementById('caltitle').textContent=calY+'年 '+MNTH[calM];
-  const grid=document.getElementById('calgrid');grid.innerHTML='';
-  const first=new Date(calY,calM,1).getDay(),days=new Date(calY,calM+1,0).getDate(),today=new Date();
-  for(let i=0;i<first;i++){const e=document.createElement('div');e.className='dc empty';grid.appendChild(e)}
-  for(let d=1;d<=days;d++){
-    const e=document.createElement('div'),key=calY+pad(calM+1)+pad(d),recArr=recs[key],dow=new Date(calY,calM,d).getDay();
-    e.className='dc';
-    if(dow===0)e.classList.add('sun');if(dow===6)e.classList.add('sat');
-    const hasIn=recArr&&recArr.some(r=>r.in);
-    const hasBoth=recArr&&recArr.some(r=>r.in&&r.out);
-    if(hasBoth)e.classList.add('hasboth');else if(hasIn)e.classList.add('hasin');
-    if(calY===today.getFullYear()&&calM===today.getMonth()&&d===today.getDate())e.classList.add('today');
-    if(selDate===key)e.classList.add('sel');
-    const num=document.createElement('span');num.textContent=d;e.appendChild(num);
-    if(hasIn){const dot=document.createElement('div');dot.className='daydot';e.appendChild(dot)}
-    e.onclick=()=>selectDay(key,d,recArr,e);
-    grid.appendChild(e);
-  }
-}
-function selectDay(key,d,recArr,el){
-  selDate=key;document.querySelectorAll('.dc.sel').forEach(c=>c.classList.remove('sel'));el.classList.add('sel');
-  const det=document.getElementById('daydet'),ne=document.getElementById('note-ed'),ni=document.getElementById('note-inp');
-  if(recArr&&recArr.length>0&&recArr[0].in){
-    let html=`<div style="font-size:11px;font-weight:700;color:var(--t3);letter-spacing:.05em;text-transform:uppercase;margin-bottom:10px">${fmtD(key)}</div>`;
-    let totalMins=0;
-    recArr.forEach((rec,i)=>{
-      const shMins=rec.in&&rec.out?toMins(rec.in,rec.out):0;
-      const hrsStr=rec.out?(shMins>0?fmtMins(shMins):'--'):'進行中';
-      if(recArr.length>1) html+=`<div style="font-size:11px;font-weight:600;color:var(--blue);margin-${i>0?'top:12px;padding-top:12px;border-top:1px solid var(--br);':'bottom:4px'}">第${i+1}班</div>`;
-      html+=`<div style="display:flex;gap:20px">
-        <div><div class="ddlbl">簽到</div><div class="ddval" style="color:var(--green)">${rec.in}</div></div>
-        <div><div class="ddlbl">簽退</div><div class="ddval" style="color:var(--amber)">${rec.out||'未簽退'}</div></div>
-        <div><div class="ddlbl">工時</div><div class="ddval" style="color:var(--blue)">${hrsStr}</div></div>
-      </div>`;
-      if(rec.note) html+=`<div class="ddnote">📝 ${rec.note}</div>`;
-      if(rec.in&&rec.out) totalMins+=toMins(rec.in,rec.out);
-    });
-    if(recArr.length>1&&totalMins>0){
-      html+=`<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--br);font-size:13px;font-weight:700;color:var(--blue)">合計工時：${fmtMins(totalMins)}</div>`;
-    }
-    det.className='daydet has';det.innerHTML=html;
-    const lastRec=recArr[recArr.length-1];
-    ne.style.display='block';ni.value=lastRec.note||'';
-    ne.dataset.dateUid=lastRec.dateUid||'';
-  }else{det.className='daydet';det.textContent='該日無出勤紀錄';ne.style.display='none'}
-}
-async function saveNote(){
-  if(!selDate){toast('請先選擇日期','fail');return}
-  const note=document.getElementById('note-inp').value.trim();
-  const ne=document.getElementById('note-ed');
-  const dateUid=ne.dataset.dateUid||'';
-  const arr=recs[selDate];
-  if(arr&&arr.length>0)arr[arr.length-1].note=note;
-  try{
-    await api({action:'saveNote',uid:UID,date:selDate,dateUid:dateUid,note});toast('備注已儲存','ok');
-    const el=document.querySelector('.dc.sel');
-    if(el&&arr) selectDay(selDate,null,arr,el);
-  }catch(_){toast('儲存失敗','fail')}
-}
-
-/* ══ TABS ══ */
-function stab(n){
-  [0,1,2].forEach(i=>{const t=document.getElementById('stab-'+i),p=document.getElementById('spanel-'+i);if(t&&t.style.display!=='none')t.classList.toggle('on',i===n);if(p)p.style.display=i===n?'block':'none'});
-  if(n===1){if(calY===undefined)initCal();else renderCal()}
-}
-function atab(n){
-  [0,1].forEach(i=>{document.getElementById('atab-'+i).classList.toggle('on',i===n);document.getElementById('apanel-'+i).style.display=i===n?'block':'none'});
-  if(n===1)loadStaffList();
-}
-async function loadStaffList(){
-  if(staffList.length>0)return;
-  try{const res=await api({action:'getStaffList',uid:UID});if(res.staff){staffList=res.staff;const sel=document.getElementById('rpt-staff');sel.innerHTML='<option value="">全部員工</option>';res.staff.forEach(s=>sel.innerHTML+=`<option value="${s.uid}">${s.name}</option>`)}}catch(_){}
-}
-
-/* ══ REPORT ══ */
-async function loadReport(){
-  const su=document.getElementById('rpt-staff').value,from=document.getElementById('rpt-from').value,to=document.getElementById('rpt-to').value;
-  if(!from||!to){toast('請選擇日期範圍','fail');return}
-  const btn=document.getElementById('btn-rpt');btn.classList.add('ld');
-  try{
-    const res=await api({action:'getReport',uid:UID,staffUid:su,from:from.replace(/-/g,''),to:to.replace(/-/g,'')});
-    btn.classList.remove('ld');
-    if(!res.records||res.records.length===0){document.getElementById('rep-result').style.display='none';document.getElementById('rep-empty').style.display='block';reportData=[];return}
-    reportData=res.records;renderReport(res.records);
-    document.getElementById('rep-result').style.display='block';document.getElementById('rep-empty').style.display='none';
-  }catch(e){btn.classList.remove('ld');toast('查詢失敗','fail')}
-}
-function renderReport(rows){
-  const tb=document.getElementById('rep-tbody');tb.innerHTML='';
-  let totalMins=0,totalDays=0;
-  rows.forEach(r=>{
-    const it=parseTime(r.in),ot=parseTime(r.out);
-    const shMins=it&&ot?toMins(r.in,r.out):0;
-    const rs=String(r.result||'');
-    const isOT=rs.includes('超時');
-    const badge=isOT?`<span class="bab">超時</span>`:rs==='正常'?`<span class="bok">正常</span>`:`<span class="bab">${rs||'--'}</span>`;
-    const rowStyle=isOT?' style="background:rgba(220,38,38,.08)"':'';
-    tb.innerHTML+=`<tr${rowStyle}><td>${fmtD(r.date)}</td><td>${r.name}</td><td>${it||'--'}</td><td>${ot||'--'}</td><td>${shMins>0?fmtMins(shMins):'--'}</td><td>${badge}</td></tr>`;
-    if(shMins>0){totalMins+=shMins;totalDays++}
-  });
-  document.getElementById('rep-tfoot').innerHTML=`<td colspan="4">合計 ${totalDays} 天</td><td>${fmtMins(totalMins)}</td><td></td>`;
-}
-function exportCSV(){
-  if(!reportData.length){toast('無資料可匯出','fail');return}
-  let csv='\uFEFF日期,姓名,簽到,簽退,工時,結果\n';
-  reportData.forEach(r=>{const it=parseTime(r.in),ot=parseTime(r.out),mins=it&&ot?toMins(r.in,r.out):0,hrs=mins>0?(mins/60).toFixed(2):'';csv+=`${fmtD(r.date)},${r.name},${it||''},${ot||''},${hrs},${r.result||''}\n`});
-  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download='attendance.csv';document.body.appendChild(a);a.click();document.body.removeChild(a);
-  toast('CSV 已下載','ok');
-}
-function exportXLSX(){
-  if(!reportData.length){toast('無資料可匯出','fail');return}
-  if(typeof XLSX==='undefined'){toast('XLSX 套件載入中，請稍後再試','fail');return}
-  const rows=[['日期','姓名','簽到','簽退','工時(h)','結果']];
-  reportData.forEach(r=>{const it=parseTime(r.in),ot=parseTime(r.out),mins=it&&ot?toMins(r.in,r.out):0,hrs=mins>0?(mins/60).toFixed(2):'';rows.push([fmtD(r.date),r.name,it||'',ot||'',hrs,r.result||''])});;
-  const ws=XLSX.utils.aoa_to_sheet(rows);ws['!cols']=[{wch:14},{wch:10},{wch:8},{wch:8},{wch:8},{wch:10}];
-  const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'出勤紀錄');XLSX.writeFile(wb,'attendance.xlsx');
-  toast('XLSX 已下載','ok');
-}
-
-/* ══ DEPUTY REPORT ══ */
-async function loadDepReport(){
-  const su=document.getElementById('dep-rpt-staff').value,from=document.getElementById('dep-rpt-from').value,to=document.getElementById('dep-rpt-to').value;
-  if(!from||!to){toast('請選擇日期範圍','fail');return}
-  const btn=document.getElementById('btn-dep-rpt');btn.classList.add('ld');
-  try{
-    const res=await api({action:'getReport',uid:UID,staffUid:su,from:from.replace(/-/g,''),to:to.replace(/-/g,'')});
-    btn.classList.remove('ld');
-    if(!res.records||res.records.length===0){document.getElementById('dep-rep-result').style.display='none';document.getElementById('dep-rep-empty').style.display='block';return}
-    document.getElementById('dep-rep-result').style.display='block';document.getElementById('dep-rep-empty').style.display='none';
-    const tb=document.getElementById('dep-rep-tbody');tb.innerHTML='';
-    let totalMins=0,totalDays=0;
-    res.records.forEach(r=>{
-      const it=parseTime(r.in),ot=parseTime(r.out),shMins=it&&ot?toMins(r.in,r.out):0;
-      const rs=String(r.result||'');
-      const isOT=rs.includes('超時');
-      const badge=isOT?`<span class="bab">超時</span>`:rs==='正常'?`<span class="bok">正常</span>`:`<span class="bab">${rs||'--'}</span>`;
-      const rowStyle=isOT?' style="background:rgba(220,38,38,.08)"':'';
-      tb.innerHTML+=`<tr${rowStyle}><td>${fmtD(r.date)}</td><td>${r.name}</td><td>${it||'--'}</td><td>${ot||'--'}</td><td>${shMins>0?fmtMins(shMins):'--'}</td><td>${badge}</td></tr>`;
-      if(shMins>0){totalMins+=shMins;totalDays++}
-    });
-    document.getElementById('dep-rep-tfoot').innerHTML=`<td colspan="4">合計 ${totalDays} 天</td><td>${fmtMins(totalMins)}</td><td></td>`;
-  }catch(e){btn.classList.remove('ld');toast('查詢失敗','fail')}
-}
-/* ══ ADMIN SETTINGS ══ */
-function toggleCol(id){document.getElementById(id).classList.toggle('on')}
-async function updateAddr(){
-  const a=document.getElementById('shop-addr-inp').value.trim();
-  if(!a){toast('請輸入地址','fail');return}
-  const btn=document.getElementById('btn-addr');btn.classList.add('ld');
-  try{const res=await api({action:'updateByAddress',address:a});if(res.success){document.getElementById('addr-disp').textContent=a;document.getElementById('addr-col').classList.remove('on');toast('地址已更新','ok')}else toast('無法解析此地址','fail')}
-  catch(_){toast('更新失敗','fail')}finally{btn.classList.remove('ld')}
-}
-function toggleWifi(){const on=document.getElementById('wifi-tgl').checked;document.getElementById('wifi-col').classList.toggle('on',on);api({action:'toggleWiFi',enabled:on}).then(()=>toast(on?'WiFi 驗證啟用':'已關閉','ok')).catch(()=>toast('設定失敗','fail'))}
-async function lockIP(){try{await api({action:'lockIP',ip:myIP});toast('✅ 已鎖定店內網路 ('+myIP+')','ok',3500)}catch(_){toast('鎖定失敗','fail')}}
-async function saveShopCfg(){
-  const btn=document.getElementById('btn-save-cfg');btn.classList.add('ld');
-  const roundUnit=parseInt(document.getElementById('cfg-round').value)||1;
-  const stdHrs=parseInt(document.getElementById('cfg-std-hrs').value)||8;
-  try{await api({action:'saveShopSettings',roundUnit,stdMins:stdHrs*60});toast('設定已儲存','ok')}catch(_){toast('儲存失敗','fail')}finally{btn.classList.remove('ld')}
-}
-/* 偵測連線類型 */
-function detectConn(){
-  const el=document.getElementById('conn-type');if(!el)return;
-  const c=navigator.connection||navigator.mozConnection||navigator.webkitConnection;
-  if(c){el.textContent=c.type==='wifi'?'📶 WiFi 連線中':c.type==='cellular'?'📱 行動網路':'🌐 '+c.type;c.addEventListener('change',detectConn)}
-  else{el.textContent='🌐 已連線'}
-}
-async function approve(tuid){
-  const card=event.target.closest('.staffcard');if(card){event.target.disabled=true;event.target.innerHTML='<div class="sp" style="display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite"></div>'}
-  try{await api({action:'approve',targetUid:tuid});toast('已核准','ok');if(card)card.style.opacity='.4';const res=await api({action:'initUser',uid:UID});renderAdmin(res)}catch(_){toast('操作失敗','fail')}
-}
-async function promoteStaff(suid,newRole){
-  try{await api({action:'promoteStaff',uid:UID,targetUid:suid,newRole});toast('已更新為 '+newRole,'ok');const res=await api({action:'initUser',uid:UID});renderAdmin(res)}catch(_){toast('操作失敗','fail')}
-}
-
-/* ══ BRAND ══ */
-function openBrandSheet(){document.getElementById('modal-brand').value=BRAND;document.getElementById('brand-ovl').classList.add('on')}
-function closeBrand(e){if(!e||e.target===document.getElementById('brand-ovl'))document.getElementById('brand-ovl').classList.remove('on')}
-async function saveBrand(){const v=document.getElementById('modal-brand').value.trim();if(!v)return;applyBrand(v);closeBrand();toast('品牌名稱已更新','ok');try{await api({action:'updateBrand',brand:v,uid:UID})}catch(_){}}
-
-/* ══ MAKEUP PUNCH ══ */
-function openMakeup(){document.getElementById('makeup-ovl').classList.add('on');const n=new Date();document.getElementById('mk-date').value=n.getFullYear()+'-'+pad(n.getMonth()+1)+'-'+pad(n.getDate());document.getElementById('mk-time').value='';document.getElementById('mk-reason').value='';document.getElementById('mk-type').value='簽到';document.getElementById('mk-shift-wrap').style.display='none';document.getElementById('mk-type').onchange=updateMkShift;document.getElementById('mk-date').onchange=updateMkShift}
-function updateMkShift(){const type=document.getElementById('mk-type').value,dateVal=document.getElementById('mk-date').value,wrap=document.getElementById('mk-shift-wrap');if(type!=='簽退'||!dateVal){wrap.style.display='none';return}wrap.style.display='block';const dateKey=dateVal.replace(/-/g,''),dayRecs=recs[dateKey]||[],sel=document.getElementById('mk-shift');sel.innerHTML='';if(dayRecs.length===0){sel.innerHTML='<option value="1">第 1 班（無紀錄）</option>'}else{dayRecs.forEach((r,i)=>{sel.innerHTML+='<option value="'+(i+1)+'">第 '+(i+1)+' 班 · 簽到 '+(r.in||'?')+' '+(r.out?'· 已簽退 '+r.out:'· 未簽退')+'</option>'})}}
-function closeMakeup(e){if(!e||e.target===document.getElementById('makeup-ovl'))document.getElementById('makeup-ovl').classList.remove('on')}
-async function submitMakeup(){
-  const date=document.getElementById('mk-date').value,time=document.getElementById('mk-time').value,type=document.getElementById('mk-type').value,reason=document.getElementById('mk-reason').value.trim();
-  if(!date||!time){toast('請選擇日期與時間','fail');return}
-  if(!reason){toast('請填寫原因','fail');return}
-  const shiftNum=type==='簽退'?document.getElementById('mk-shift').value:'';
-  const btn=document.getElementById('btn-mk');btn.classList.add('ld');
-  try{await api({action:'requestMakeup',uid:UID,name:NAME||ls('u_name'),date,time,type,reason,shiftNum});toast('補打卡申請已送出','ok');closeMakeup()}catch(_){toast('提交失敗','fail')}finally{btn.classList.remove('ld')}
-}
-function fmtMkDate(s){
-  if(!s)return'--';
-  const str=String(s);
-  /* Handle Date object string like 'Tue Mar 31 2026 ...' or ISO or yyyy-MM-dd */
-  let d;
-  if(str.match(/^\d{4}-\d{2}-\d{2}$/)){d=new Date(str+'T00:00:00')}
-  else{d=new Date(str)}
-  if(isNaN(d))return str;
-  const dow=['日','一','二','三','四','五','六'];
-  return(d.getMonth()+1)+'/'+d.getDate()+' 週'+dow[d.getDay()];
-}
-function fmtMkTime(s){
-  if(!s)return'--';
-  const str=String(s).trim();
-  const m=str.match(/(\d{1,2}):(\d{2})/);
-  if(m)return pad(parseInt(m[1]))+':'+pad(parseInt(m[2]));
-  const d=new Date(str);if(!isNaN(d))return pad(d.getHours())+':'+pad(d.getMinutes());
-  return str;
-}
-function renderMakeupAdmin(list){
-  if(!list||list.length===0){document.getElementById('admin-makeup-sec').style.display='none';return}
-  document.getElementById('admin-makeup-sec').style.display='block';
-  document.getElementById('mkcount').textContent=list.length;
-  const el=document.getElementById('admin-makeup-list');el.innerHTML='';
-  list.forEach(m=>{
-    const d=document.createElement('div');d.className='staffcard';d.style.flexWrap='wrap';
-    const dateStr=fmtMkDate(m.date),timeStr=fmtMkTime(m.time);
-    const shiftLabel=m.shift?' 第'+m.shift+'班':'';
-    d.innerHTML=`<div class="ava">${(m.name||'?').slice(0,2)}</div><div style="flex:1"><div class="snm">${m.name} \xB7 ${m.type}${shiftLabel}</div><div class="sph">${dateStr} ${timeStr}</div>${m.reason?'<div class="sph" style="margin-top:2px;color:var(--t2)">原因：'+m.reason+'</div>':''}</div><div style="display:flex;gap:6px"><button class="appbtn" onclick="handleMakeupReq('${m.id}',true)">通過</button><button class="appbtn" style="background:var(--red)" onclick="handleMakeupReq('${m.id}',false)">拒絕</button></div>`;
-    el.appendChild(d);
-  });
-}
-async function handleMakeupReq(id,approved){
-  const btn=event.target;btn.disabled=true;btn.innerHTML='<div class="sp" style="display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite"></div>';
-  try{await api({action:'handleMakeup',makeupId:id,approved});toast(approved?'已通過':'已拒絕','ok');const card=btn.closest('.staffcard');if(card)card.style.opacity='.35';const res=await api({action:'initUser',uid:UID});renderAdmin(res)}catch(_){toast('操作失敗','fail');btn.disabled=false;btn.textContent=approved?'通過':'拒絕'}
-}
-
-/* ══ AUTH ══ */
-function vp(v){return /^09\d{8}$/.test(v.replace(/[-\s]/g,'').replace(/^\+886/,'0'))}
-function se(id,s){const e=document.getElementById(id);if(e)e.classList.toggle('on',s)}
-function si(id,s){const e=document.getElementById(id);if(e)e.classList.toggle('bad',s)}
-
-async function setupAdmin(){
-  const brand=document.getElementById('adm-brand').value.trim();
-  const phone=document.getElementById('adm-phone').value.trim();
-  const pass=document.getElementById('adm-pass').value.trim();
-  let ok=true;
-  if(!brand){se('e-adm-brand',1);si('adm-brand',1);ok=false}else{se('e-adm-brand',0);si('adm-brand',0)}
-  if(!vp(phone)){se('e-adm-phone',1);si('adm-phone',1);ok=false}else{se('e-adm-phone',0);si('adm-phone',0)}
-  if(pass.length<4){se('e-adm-pass',1);si('adm-pass',1);ok=false}else{se('e-adm-pass',0);si('adm-pass',0)}
-  if(!ok)return;
-  const btn=document.getElementById('btn-setup');btn.classList.add('ld');
-  const addr=document.getElementById('adm-addr').value.trim();
-  try{const res=await api({action:'initUser',uid:UID,adminPass:pass,phone,brand,address:addr||undefined});if(res.success){applyBrand(brand);set('u_role','ADMIN');ROLE='ADMIN';set('u_name','管理員');NAME='管理員';toast('系統啟動！','ok');btn.classList.remove('ld');show('page-admin');const r2=await api({action:'initUser',uid:UID});if(r2.role==='ADMIN')renderAdmin(r2);return}}
-  catch(_){toast('連線失敗','fail')}finally{btn.classList.remove('ld')}
-}
-async function recoverDevice(){
-  const phone=document.getElementById('rec-phone').value.trim(),pass=document.getElementById('rec-pass').value.trim();
-  se('e-rec',0);si('rec-phone',0);si('rec-pass',0);
-  const btn=document.getElementById('btn-recover');btn.classList.add('ld');
-  try{
-    const res=await api({action:'initUser',uid:UID,isRecover:true,phone,adminPass:pass});
-    if(res.success){
-      if(res.uid){UID=res.uid;set('u_uid',res.uid)}
-      if(res.brand)applyBrand(res.brand);
-      set('u_role',res.role);
-      if(res.name)set('u_name',res.name);
-      toast('驗證成功！','ok');setTimeout(()=>location.reload(),800);
-    }else{se('e-rec',1);si('rec-phone',1);si('rec-pass',1)}
-  }catch(_){toast('連線失敗','fail')}finally{btn.classList.remove('ld')}
-}
-async function submitReg(){
-  const name=document.getElementById('reg-name').value.trim(),phone=document.getElementById('reg-phone').value.trim(),pass=document.getElementById('reg-pass').value.trim();
-  let ok=true;
-  if(!name){se('e-reg-name',1);si('reg-name',1);ok=false}else{se('e-reg-name',0);si('reg-name',0)}
-  if(!vp(phone)){se('e-reg-phone',1);si('reg-phone',1);ok=false}else{se('e-reg-phone',0);si('reg-phone',0)}
-  if(pass.length<4){se('e-reg-pass',1);si('reg-pass',1);ok=false}else{se('e-reg-pass',0);si('reg-pass',0)}
-  if(!ok)return;
-  const btn=document.getElementById('btn-reg');btn.classList.add('ld');
-  try{await api({action:'register',uid:UID,name,phone,pass});set('u_name',name);NAME=name;set('u_role','PENDING');show('page-pending');startPoll()}
-  catch(_){toast('提交失敗','fail')}finally{btn.classList.remove('ld')}
-}
-function logout(){clearInterval(pollTimer);localStorage.clear();toast('已登出','ok');setTimeout(()=>location.reload(),500)}
-
-/* ══ A2HS (Add to Home Screen) ══ */
-let deferredPrompt=null;
-window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;showA2HS()});
-function showA2HS(){document.querySelectorAll('.a2hs-btn').forEach(b=>b.style.display='flex')}
-function addToHome(){
-  /* Android / Chrome: use native prompt */
-  if(deferredPrompt){deferredPrompt.prompt();deferredPrompt.userChoice.then(()=>{deferredPrompt=null;hideA2HS()});return}
-  /* iOS Safari: show manual instructions */
-  const iOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1;
-  if(iOS){showA2HSGuide('ios');return}
-  /* Other: generic fallback */
-  showA2HSGuide('other');
-}
-function hideA2HS(){document.querySelectorAll('.a2hs-btn').forEach(b=>b.style.display='none')}
-function showA2HSGuide(platform){
-  const ovl=document.getElementById('a2hs-ovl');
-  const body=document.getElementById('a2hs-body');
-  if(platform==='ios'){
-    body.innerHTML=`<div style="text-align:center">
-      <div style="font-size:52px;margin-bottom:14px">📲</div>
-      <div style="font-size:18px;font-weight:700;margin-bottom:14px">加到手機桌面</div>
-      <div style="font-size:14px;color:var(--t2);line-height:1.8;text-align:left">
-        <b>Step 1：</b>點擊底部分享按鈕 <span style="font-size:18px">⬆️</span><br>
-        <b>Step 2：</b>選擇「<b>加入主畫面</b>」<br>
-        <b>Step 3：</b>點擊右上角「新增」
-      </div>
-    </div>`;
-  }else{
-    body.innerHTML=`<div style="text-align:center">
-      <div style="font-size:52px;margin-bottom:14px">📲</div>
-      <div style="font-size:18px;font-weight:700;margin-bottom:14px">加到手機桌面</div>
-      <div style="font-size:14px;color:var(--t2);line-height:1.8;text-align:left">
-        點擊瀏覽器右上角 <b>⠇</b> 選單<br>
-        選擇「<b>加到主畫面</b>」或「<b>安裝應用程式</b>」
-      </div>
-    </div>`;
-  }
-  ovl.classList.add('on');
-}
-function closeA2HS(e){if(!e||e.target===document.getElementById('a2hs-ovl'))document.getElementById('a2hs-ovl').classList.remove('on')}
-/* Show A2HS button if not already installed as standalone */
-if(!window.matchMedia('(display-mode:standalone)').matches&&!navigator.standalone){
-  const iOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1;
-  if(iOS) showA2HS();
-}else{
-  /* 已安裝到桌面，隱藏 A2HS 按鈕 */
-  hideA2HS();
-}
-/* 獨立模式提示 */
-const _sa=window.matchMedia('(display-mode:standalone)').matches||navigator.standalone;
-if(_sa){const tip=document.getElementById('standalone-tip');if(tip)tip.style.display='block'}
-
-window.addEventListener('load',()=>{init()});
-</script>
 </body>
 </html>
